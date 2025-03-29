@@ -4,7 +4,7 @@
 
 这是一个 **YUZU 抽奖** 项目，旨在通过链上智能合约实现透明、公正的抽奖活动。
 
-需求的 PRD & 设计稿图, 放在了 [material](./material/) 中, 项目设有**货币奖励**，欢迎感兴趣的朋友前往 [According Work 抽奖项目页面](https://according.work/projects/67e166c587803b11c423a469/) 认领任务并参与开发！
+需求的 PRD & 设计稿图, 放在了 [material](./material/) 中, 项目设有**货币奖励**，欢迎感兴趣的朋友前往 [According Work](https://according.work/projects/67e166c587803b11c423a469/) 认领任务并参与开发！
 
 ## 技术相关
 

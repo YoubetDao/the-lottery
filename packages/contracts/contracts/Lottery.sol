@@ -6,7 +6,7 @@ import "./ILottery.sol";
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 
 contract Lottery is LotteryDataLayout, ILottery, Ownable {
-    constructor(address initialOwner) Ownable(initialOwner) {}
+    constructor() Ownable(msg.sender) {}
 
     function createRound(
         uint256 startTime,

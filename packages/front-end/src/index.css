@@ -12,3 +12,7 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+
+.yuzu-border {
+  @apply rounded-lg border-2 border-b-4 border-black;
+}

@@ -19,6 +19,12 @@ abstract contract LotteryDataLayout {
         address[] users;
         // Amount of yuzu spent by each user
         mapping(address => uint256) usersMap;
+        // Number of tickets owned by each user
+        mapping(address => uint256) ticketsCount;
+        // Mapping of ticket IDs to user addresses
+        mapping(uint256 => address) ticketOwners;
+        // Total number of tickets issued for this round
+        uint256 totalTickets;
         // Total amount of yuzu spent by users
         uint256 accumulatedAmount;
         // Total number of participants

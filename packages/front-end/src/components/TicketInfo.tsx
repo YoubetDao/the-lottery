@@ -36,19 +36,19 @@ const TicketInfo: React.FC<TicketInfoProps> = ({
   };
 
   return (
-    <div className="flex justify-center gap-4 my-8">
-      <div className="bg-yuzu-cream rounded-lg p-6 text-black w-80">
+    <div className="flex justify-center items-start gap-6 my-8 w-full">
+      <div className="bg-yuzu-cream rounded-lg p-6 text-black flex-1">
         <div className="text-center mb-4">
-          <div>Get Your Ticket Now!</div>
-          <div className="text-4xl font-bold text-orange-500">
+          <div className="text-2x font-bold text-black-500 mt-5">Get Your Ticket Now!</div>
+          <div className="text-4xl font-bold text-[#137c37] mt-4">
             {countdown.days}d {countdown.hours}h {countdown.minutes}m
           </div>
-          <div className="text-sm mb-4">Until the draw</div>
+          <div className="text-sm mt-4 font-bold">Until the draw</div>
         </div>
         <div className="text-sm">
           <div className="flex justify-between mb-2">
-            <span>Contract Address</span>
-            <span className="flex items-center">
+            <span className="font-bold">Contract Address</span>
+            <span className="flex items-center font-bold text-[#137c37]">
               {contractInfo.address}
               <button
                 className="ml-1"
@@ -61,18 +61,18 @@ const TicketInfo: React.FC<TicketInfoProps> = ({
             </span>
           </div>
           <div className="flex justify-between mb-2">
-            <span>Next Draw</span>
-            <span>{contractInfo.nextDraw}</span>
+            <span className="font-bold">Next Draw</span>
+            <span className="font-bold text-[#137c37]">{contractInfo.nextDraw}</span>
           </div>
           <div className="flex justify-between">
-            <span>Your Ticket</span>
-            <span>{contractInfo.userTickets}</span>
+            <span className="font-bold">Your Ticket</span>
+            <span className="font-bold text-[#137c37]">{contractInfo.userTickets}</span>
           </div>
         </div>
       </div>
 
-      <div className="w-80">
-        <div className="bg-yuzu-orange rounded-t-lg p-4 flex justify-between items-center">
+      <div className="bg-yuzu-orange rounded-lg p-6 text-black flex-1"> 
+        <div className="rounded-t-lg  flex justify-between items-center">
           <div className="text-3xl font-bold">{ticketData.quantity}</div>
           <div className="text-right">
             <div>MAX {ticketData.maxLimit.toLocaleString()} YUZU</div>
@@ -80,7 +80,7 @@ const TicketInfo: React.FC<TicketInfoProps> = ({
           </div>
         </div>
 
-        <div className="bg-yuzu-cream rounded-b-lg p-4 text-black">
+        {/* <div className="bg-yuzu-cream rounded-b-lg p-4 text-black"> */}
           <div className="flex justify-between gap-2 mb-4">
             <button
               className="bg-gray-200 flex-1 py-2 rounded"
@@ -108,22 +108,24 @@ const TicketInfo: React.FC<TicketInfoProps> = ({
             </button>
           </div>
 
-          <div className="flex justify-between mb-4">
-            <span>Cost</span>
-            <span>{ticketData.cost} YUZU</span>
-          </div>
+          <div className="bg-[#137c37] rounded-b-lg">
+            <div className="flex justify-between mb-4">
+              <span>Cost</span>
+              <span>{ticketData.cost} YUZU</span>
+            </div>
 
-          <button
-            className="bg-yuzu-green w-full py-3 rounded-lg text-black font-bold mb-2"
-            onClick={() => console.log(`Buying ${ticketData.quantity} tickets`)}
-          >
-            Buy {ticketData.quantity} Tickets
-          </button>
+            <button
+              className="bg-yuzu-green w-full py-3 rounded-lg text-black font-bold mb-2"
+              onClick={() => console.log(`Buying ${ticketData.quantity} tickets`)}
+            >
+              Buy {ticketData.quantity} Tickets
+            </button>
 
-          <div className="text-xs text-center">
-            Buying ticket will cost YUZU, and all purchases are final
+            <div className="text-xs text-center">
+              Buying ticket will cost YUZU, and all purchases are final
+            </div>
           </div>
-        </div>
+        {/* </div> */}
       </div>
     </div>
   );

@@ -3,10 +3,6 @@ pragma solidity ^0.8.0;
 
 // @dev Interface for lottery contract
 abstract contract ILottery {
-    // Events
-    event DrawStarted(uint256 indexed roundId, uint256 requestId);
-    event DrawCompleted(uint256 indexed roundId, uint256 randomNumber);
-
     // @dev Create a new round of the lottery
     function createRound(
         uint256 startTime,

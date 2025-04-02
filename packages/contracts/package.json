@@ -4,32 +4,17 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "hardhat test",
-    "compile": "hardhat compile"
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "@nomicfoundation/hardhat-chai-matchers": "^1.0.0",
-    "@nomicfoundation/hardhat-toolbox": "^1.0.2",
-    "@typechain/hardhat": "^6.1.2",
-    "@types/dotenv": "^8.2.3",
-    "@types/node": "^16.0.0",
-    "chai": "^4.3.4",
-    "hardhat": "^2.22.19",
-    "typechain": "^8.3.2",
-    "@nomiclabs/hardhat-ethers": "^2.0.0",
-    "@nomiclabs/hardhat-waffle": "^2.0.0"
+    "@nomicfoundation/hardhat-toolbox": "^5.0.0",
+    "hardhat": "^2.22.19"
   },
   "dependencies": {
-    "ethers": "5.8.0",
-    "@chainlink/contracts": "^0.4.0",
-    "@chainlink/hardhat-chainlink": "^0.0.4",
-    "@nomicfoundation/hardhat-network-helpers": "^1.0.12",
     "@openzeppelin/contracts": "^5.2.0",
-    "bcrypto": "^5.5.2",
-    "chainlink": "github:smartcontractkit/chainlink",
     "dotenv": "^16.4.7"
   }
 }

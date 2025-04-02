@@ -4,33 +4,9 @@ pragma solidity ^0.8.0;
 import "./LotteryDataLayout.sol";
 import "./ILottery.sol";
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
-import {VRFConsumerBaseV2} from "./VRFConsumerBaseV2.sol";
-import {VRFCoordinatorV2Interface} from "./VRFCoordinatorV2Interface.sol";
 
-
-contract Lottery is LotteryDataLayout, ILottery, VRFConsumerBaseV2, Ownable {
-    // Chainlink VRF variables
-    VRFCoordinatorV2Interface private immutable vrfCoordinator;
-    uint64 private immutable subscriptionId;
-    bytes32 private immutable keyHash;
-    uint32 private immutable callbackGasLimit;
-    uint16 private constant REQUEST_CONFIRMATIONS = 3;
-    uint32 private constant NUM_WORDS = 1;
-
-    // Mapping from requestId to roundId
-    mapping(uint256 => uint256) public vrfRequests;
-
-    constructor(
-        address _vrfCoordinator,
-        uint64 _subscriptionId,
-        bytes32 _keyHash,
-        uint32 _callbackGasLimit
-    ) VRFConsumerBaseV2(_vrfCoordinator) Ownable(msg.sender) {
-        vrfCoordinator = VRFCoordinatorV2Interface(_vrfCoordinator);
-        subscriptionId = _subscriptionId;
-        keyHash = _keyHash;
-        callbackGasLimit = _callbackGasLimit;
-    }
+contract Lottery is LotteryDataLayout, ILottery, Ownable {
+    constructor() Ownable(msg.sender) {}
 
     function createRound(
         uint256 startTime,
@@ -68,36 +44,6 @@ contract Lottery is LotteryDataLayout, ILottery, VRFConsumerBaseV2, Ownable {
     }
 
     function draw(uint256 roundId) external override onlyOwner {
-        require(roundId < rounds.length, "Invalid round ID");
-        Round storage round = rounds[roundId];
-        require(block.timestamp >= round.endTime, "Round not ended");
-        require(round.isOpen, "Round already closed");
-
-        // Request random number from Chainlink VRF
-        uint256 requestId = vrfCoordinator.requestRandomWords(
-            keyHash,
-            subscriptionId,
-            REQUEST_CONFIRMATIONS,
-            callbackGasLimit,
-            NUM_WORDS
-        );
-        
-        vrfRequests[requestId] = roundId;
-        emit DrawStarted(roundId, requestId);
-    }
-
-    function fulfillRandomWords(
-        uint256 requestId,
-        uint256[] memory randomWords
-    ) internal override {
-        uint256 roundId = vrfRequests[requestId];
-        Round storage round = rounds[roundId];
-        
-        // Use random number to select winners
-        uint256 randomNumber = randomWords[0];
-        // TODO: Implement winner selection logic
-        
-        round.isOpen = false;
-        emit DrawCompleted(roundId, randomNumber);
+        // TODO: Implement the draw logic
     }
 }

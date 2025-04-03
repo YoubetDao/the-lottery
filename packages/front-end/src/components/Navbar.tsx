@@ -26,7 +26,7 @@ const Navbar: React.FC<NavbarProps> = () => {
           <div>
             {/* shows if not connect wallet */}
             <button
-              className="bg-yuzu-green py-2 px-4 font-bold text-black yuzu-border"
+              className="bg-yuzu-green py-2 px-4 font-bold text-black yuzu-border !rounded-lg"
               onClick={() => console.log("Connect wallet clicked")}
             >
               Connect Wallet
@@ -61,7 +61,7 @@ const Navbar: React.FC<NavbarProps> = () => {
             </div>
           </div>
           <button
-            className="bg-yuzu-green py-2 px-4 font-bold text-black yuzu-border"
+            className="bg-yuzu-green py-2 px-4 font-bold text-black yuzu-border !rounded-lg"
             onClick={() => console.log("claim Prize clicked")}
           >
             Claim Prize

@@ -14,5 +14,5 @@ body {
 }
 
 .yuzu-border {
-  @apply rounded-lg border-2 border-b-4 border-black;
+  @apply rounded-lg border-2 border-b-4 border-black shadow-custom;
 }

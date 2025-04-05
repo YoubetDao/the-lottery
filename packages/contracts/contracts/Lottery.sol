@@ -55,7 +55,8 @@ contract Lottery is LotteryDataLayout, ILottery, Ownable {
     function buy(
         uint256 roundId,
         uint256 amount,
-        bytes32 signature
+        bytes32 signature,
+        uint256 deadline
     ) external override {
         require(roundId > 0 && roundId <= rounds.length, "Invalid round ID");
         require(amount > 0, "Amount must be greater than 0");
@@ -69,17 +70,16 @@ contract Lottery is LotteryDataLayout, ILottery, Ownable {
         require(ticketsToIssue > 0, "Tickets to issue must be greater than 0");
 
         // consume yuzu
-        // create consume reason code
-        bytes32 consumeReasonCode = keccak256("LOTTERY_TICKET_PURCHASE");
-
-        // get current timestamp as deadline, add 1 hour validity
-        uint256 deadline = block.timestamp + 1 hours;
+        // use the predefined consume reason code
+        
+        // validate that deadline is in the future
+        require(deadline > block.timestamp, "Deadline must be in the future");
 
         // call Points contract consume function, use signature for authorization
         points.consume(
             msg.sender,
             amount,
-            consumeReasonCode,
+            LOTTERY_TICKET_PURCHASE,
             deadline,
             signature
         );

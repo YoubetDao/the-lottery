@@ -79,4 +79,8 @@ abstract contract LotteryDataLayout {
 
     // @dev The array of rounds, support parallel rounds
     Round[] public rounds;
+
+    // Consume reason code for lottery ticket purchase
+    bytes32 public constant LOTTERY_TICKET_PURCHASE =
+        keccak256("LOTTERY_TICKET_PURCHASE");
 }

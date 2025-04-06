@@ -55,7 +55,7 @@ contract Lottery is LotteryDataLayout, ILottery, Ownable {
     function buy(
         uint256 roundId,
         uint256 amount,
-        bytes32 signature,
+        bytes calldata signature,
         uint256 deadline
     ) external override {
         require(roundId > 0 && roundId <= rounds.length, "Invalid round ID");
@@ -71,7 +71,7 @@ contract Lottery is LotteryDataLayout, ILottery, Ownable {
 
         // consume yuzu
         // use the predefined consume reason code
-        
+
         // validate that deadline is in the future
         require(deadline > block.timestamp, "Deadline must be in the future");
 
@@ -125,7 +125,7 @@ contract Lottery is LotteryDataLayout, ILottery, Ownable {
 
         uint256 participantCount = round.users.length;
         require(participantCount > 0, "No participants");
-        
+
         // 选择多个获奖者
         address[] memory winners = new address[](round.winerCount);
         for (uint256 i = 0; i < round.winerCount; i++) {

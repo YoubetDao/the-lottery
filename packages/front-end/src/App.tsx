@@ -16,7 +16,6 @@ const App: React.FC = () => {
           <TicketInfo />
           <DrawHistory />
           <HowToPlay />
-          <Footer />
         </div>
       </div>
     </div>

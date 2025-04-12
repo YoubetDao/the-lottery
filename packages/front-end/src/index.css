@@ -16,3 +16,18 @@ body {
 .yuzu-border {
   @apply rounded-lg border-2 border-b-4 border-black shadow-custom;
 }
+
+.decorated-box {
+  @apply relative;
+}
+.decorated-box:before {
+  @apply content-[''] bg-[url("./assets/left-yuzu.png")] absolute w-10 h-10 bg-no-repeat bg-left bg-contain -left-6 bottom-6;
+}
+/* 左下第二个图 + 右上图 */
+.decorated-box::after {
+  @apply content-[''] bg-[url("./assets/logo.png")] w-[3.5rem] h-[3.5rem] absolute bg-no-repeat bg-left-bottom bg-contain -left-2.5 -bottom-8;
+}
+
+.decorated-div::after {
+  @apply content-[''] bg-[url("./assets/right-yuzu.png")] w-12 h-12 absolute bg-no-repeat bg-right-top bg-contain -right-[18px] -top-[15px];
+}

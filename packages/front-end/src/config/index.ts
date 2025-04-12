@@ -12,7 +12,7 @@ export const eduTestnet = {
   },
   rpcUrls: {
     default: {
-      http: ["https://open-campus-codex-sepolia.drpc.org"],
+      http: ["https://rpc.open-campus-codex.gelato.digital"],
     },
   },
 };

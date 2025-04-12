@@ -55,7 +55,7 @@ contract Lottery is LotteryDataLayout, ILottery, Ownable {
     function buy(
         uint256 roundId,
         uint256 amount,
-        bytes32 signature,
+        bytes calldata signature,
         uint256 deadline
     ) external override {
         require(roundId > 0 && roundId <= rounds.length, "Invalid round ID");
@@ -71,7 +71,7 @@ contract Lottery is LotteryDataLayout, ILottery, Ownable {
 
         // consume yuzu
         // use the predefined consume reason code
-        
+
         // validate that deadline is in the future
         require(deadline > block.timestamp, "Deadline must be in the future");
 
@@ -111,7 +111,40 @@ contract Lottery is LotteryDataLayout, ILottery, Ownable {
         emit LotteryTicketBought(roundId, msg.sender, amount);
     }
 
+    /**
+     * @dev Executes the lottery draw to select winners
+     * @notice Only callable by contract owner. Uses on-chain data for pseudo-randomness (less secure than Chainlink VRF)
+     * @param roundId The round ID to draw
+     */
     function draw(uint256 roundId) external override onlyOwner {
-        // TODO: Implement the draw logic
+        require(roundId < rounds.length, "Invalid round ID");
+        Round storage round = rounds[roundId];
+        require(block.timestamp >= round.endTime, "Round not ended");
+        require(round.isOpen, "Round already closed");
+        require(round.winerCount > 0, "No winners specified");
+
+        uint256 participantCount = round.users.length;
+        require(participantCount > 0, "No participants");
+
+        // 选择多个获奖者
+        address[] memory winners = new address[](round.winerCount);
+        for (uint256 i = 0; i < round.winerCount; i++) {
+            uint256 randomIndex = uint256(
+                keccak256(
+                    abi.encodePacked(
+                        block.prevrandao,
+                        block.timestamp,
+                        participantCount,
+                        round.users[participantCount - 1],
+                        i // 添加循环索引增加随机性
+                    )
+                )
+            ) % participantCount;
+            winners[i] = round.users[randomIndex];
+        }
+
+        round.winnerUsers = winners;
+        round.isOpen = false;
+        emit WinnersSelected(roundId, winners);
     }
 }

@@ -4,7 +4,7 @@ module.exports = {
     extend: {
       colors: {
         "yuzu-green": "#D2FF70",
-        "yuzu-dark-green": "#1D3923",
+        "yuzu-dark-green": "#102C24",
         "yuzu-orange": "#F5A623",
         "yuzu-cream": "#FCF0E3",
       },
@@ -14,5 +14,4 @@ module.exports = {
       },
     },
   },
-  plugins: [],
 };

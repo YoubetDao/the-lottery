@@ -18,7 +18,8 @@
   font-display: swap;
 }
 /* 其他自定义样式 */
-html,body {
+html,
+body {
   margin: 0;
   font-family: Poppins, sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -46,3 +47,8 @@ html,body {
 .decorated-div::after {
   @apply content-[''] bg-[url("./assets/right-yuzu.png")] w-12 h-12 absolute bg-no-repeat bg-right-top bg-contain -right-[18px] -top-[15px];
 }
+
+.bg-decorated {
+  @apply relative w-screen min-h-full bg-[url("./assets/buy-ticket-bg.png")]  z-0 bg-cover bg-no-repeat bg-top;
+}
+

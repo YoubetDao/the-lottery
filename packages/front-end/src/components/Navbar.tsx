@@ -11,9 +11,9 @@ const Navbar: React.FC<NavbarProps> = () => {
 
   return (
     <>
-      <nav className="bg-yuzu-cream yuzu-border mx-auto mb-4 max-w-5xl z-10">
-        <div className="flex justify-between items-center p-4 px-6">
-          <div className="flex gap-4">
+      <nav className="bg-yuzu-cream yuzu-card-border mx-auto mb-4 max-w-5xl ">
+        <div className="flex justify-between items-center py-6 px-10">
+          <div className="flex gap-6">
             <button className="font-bold text-[#F05A28] text-base leading-3 pt-1">
               <img
                 src={require("../assets/logo.png")}
@@ -22,17 +22,17 @@ const Navbar: React.FC<NavbarProps> = () => {
               />
               YUZU LOTTERY
             </button>
-            <button className="font-bold text-stone-400 text-base leading-3">
+            <button className="font-semibold text-[#102C24] text-base leading-[14px] opacity-50">
               How It Works
             </button>
-            <button className="font-bold text-stone-400 text-base leading-3">
+            <button className="font-semibold text-[#102C24] text-base leading-[14px] opacity-50">
               Past Draw
             </button>
           </div>
           <div>
             {isConnected ? (
               <div className="cursor-pointer" onClick={openAccountModal}>
-                <span className="font-bold text-red-400">
+                <span className="font-bold text-[#F05A28]">
                   {address
                     ? `${address.slice(0, 5)}...${address.slice(-4)}`
                     : ""}
@@ -48,7 +48,7 @@ const Navbar: React.FC<NavbarProps> = () => {
               </div>
             ) : (
               <button
-                className="bg-yuzu-green py-2 px-4 font-bold text-black yuzu-border cursor-pointer"
+                className="bg-yuzu-green p-4 font-semibold text-black yuzu-button-border cursor-pointer"
                 onClick={openConnectModal}
               >
                 Connect Wallet
@@ -57,9 +57,9 @@ const Navbar: React.FC<NavbarProps> = () => {
           </div>
         </div>
       </nav>
-      <div className="bg-[#FFD02C] yuzu-border mx-auto mb-4 max-w-5xl px-8 py-4 decorated-box z-10">
+      <div className="bg-[#FFD02C] yuzu-card-border mx-auto mb-4 max-w-5xl px-8 py-4 decorated-box">
         <div className="flex justify-between items-center decorated-div">
-          <div className="flex gap-4">
+          <div className="flex gap-6">
             <img
               src={require("../assets/playwin-logo.png")}
               alt="playwin-logo"
@@ -74,7 +74,7 @@ const Navbar: React.FC<NavbarProps> = () => {
             </div>
           </div>
           <button
-            className="bg-yuzu-green py-2 px-4 font-bold text-black yuzu-border !rounded-lg"
+            className="bg-yuzu-green p-6 font-bold text-black yuzu-button-border !rounded-lg"
             onClick={() => console.log("claim Prize clicked")}
           >
             Claim Prize

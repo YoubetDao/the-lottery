@@ -13,8 +13,11 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-.yuzu-border {
-  @apply rounded-2xl border-2 border-b-4 border-black;
+.yuzu-button-border {
+  @apply rounded-lg border-2 border-black shadow-button;
+}
+.yuzu-card-border {
+  @apply rounded-2xl border-2 border-black shadow-button;
 }
 
 .decorated-box {

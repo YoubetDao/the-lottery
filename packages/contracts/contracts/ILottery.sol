@@ -15,7 +15,8 @@ abstract contract ILottery {
     function buy(
         uint256 roundId,
         uint256 amount,
-        bytes32 signature
+        bytes calldata signature,
+        uint256 deadline
     ) external virtual;
 
     // @dev Draw the winning numbers

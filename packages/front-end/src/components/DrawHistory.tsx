@@ -113,14 +113,51 @@ const DrawHistory: React.FC<DrawHistoryProps> = ({
           <div className="mt-4 border-t pt-4">
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <h4 className="font-bold">Prize Pool</h4>
-                <p>Total: 10,000 YUZU</p>
+                <h4 className="font-bold text-gray-500">Prize Pool</h4>
+                <p className="text-green-600 text-2xl font-bold">$557,762</p>
               </div>
               <div>
-                <h4 className="font-bold">Winners</h4>
-                <p>Match 6: 1 winner</p>
-                <p>Match 5: 10 winners</p>
-                <p>Match 4: 100 winners</p>
+                <h4 className="font-bold text-gray-500">Total Reward</h4>
+                <p className="font-bold text-xl">663</p>
+              </div>
+            </div>
+            <div className="grid grid-cols-5 gap-2 mt-4">
+              <div>
+                <p className="text-gray-500">Match Part 1</p>
+                <p className="text-green-600 font-bold">$762</p>
+                <p className="text-sm">78 Winning Tickets</p>
+              </div>
+              <div>
+                <p className="text-gray-500">Match Part 2</p>
+                <p className="text-green-600 font-bold">$1,762</p>
+                <p className="text-sm">65 Winning Tickets</p>
+              </div>
+              <div>
+                <p className="text-gray-500">Match Part 3</p>
+                <p className="text-green-600 font-bold">$2,071</p>
+                <p className="text-sm">65 Winning Tickets</p>
+              </div>
+              <div>
+                <p className="text-gray-500">Match Part 4</p>
+                <p className="text-green-600 font-bold">$3,623</p>
+                <p className="text-sm">65 Winning Tickets</p>
+              </div>
+              <div>
+                <p className="text-gray-500">Match Part 5</p>
+                <p className="text-green-600 font-bold">$4,623</p>
+                <p className="text-sm">65 Winning Tickets</p>
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-2 mt-4">
+              <div>
+                <p className="text-gray-500">Match Part 6</p>
+                <p className="text-green-600 font-bold">$8,623</p>
+                <p className="text-sm">65 Winning Tickets</p>
+              </div>
+              <div>
+                <p className="text-gray-500">Burn</p>
+                <p className="text-green-600 font-bold">$18,623</p>
+                <p className="text-sm">65 Winning Tickets</p>
               </div>
             </div>
           </div>

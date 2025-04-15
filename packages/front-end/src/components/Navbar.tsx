@@ -22,10 +22,10 @@ const Navbar: React.FC<NavbarProps> = () => {
               />
               <a href="#yuzu_lottery">YUZU LOTTERY</a>
             </button>
-            <button className="font-semibold text-[#102C24] text-base leading-[14px] opacity-50">
+            <button className="font-semibold text-[#102C24] text-base leading-[14px] opacity-50 hover:opacity-100 hover:font-bold hover:text-[#F05A28]">
               <a href="#past_draw"> Past Draw</a>
             </button>
-            <button className="font-semibold text-[#102C24] text-base leading-[14px] opacity-50">
+            <button className="font-semibold text-[#102C24] text-base leading-[14px] opacity-50 hover:opacity-100 hover:font-bold hover:text-[#F05A28]">
               <a href="#how_it_works">How It Works</a>
             </button>
           </div>

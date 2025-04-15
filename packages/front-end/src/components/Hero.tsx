@@ -8,7 +8,7 @@ const Hero: React.FC<HeroProps> = ({ prizeAmount = "$765,772" }) => {
   return (
     <div className="z-10 relative top-[85px] pb-8">
       <div className="grid grid-cols-3 pb-10 items-center gap-7 justify-between">
-        <img src={require("../assets/coin.png")} alt="yuzu coin" />
+        <img src={require("../assets/left-coin.png")} alt="yuzu coin" />
         <div className="flex flex-col items-center">
           <img
             src={require("../assets/buy-ticket.png")}

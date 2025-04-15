@@ -20,13 +20,13 @@ const Navbar: React.FC<NavbarProps> = () => {
                 alt="logo"
                 className="w-8 h-8 inline mr-1 relative -top-[1px]"
               />
-              YUZU LOTTERY
+              <a href="#yuzu_lottery">YUZU LOTTERY</a>
             </button>
             <button className="font-semibold text-[#102C24] text-base leading-[14px] opacity-50">
-              How It Works
+              <a href="#past_draw"> Past Draw</a>
             </button>
             <button className="font-semibold text-[#102C24] text-base leading-[14px] opacity-50">
-              Past Draw
+              <a href="#how_it_works">How It Works</a>
             </button>
           </div>
           <div>

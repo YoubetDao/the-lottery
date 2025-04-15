@@ -19,7 +19,30 @@
 
 ### 前端
 
-（待补充）
+前端使用 React 构建，并集成了现代化的 Web3 库以实现区块链交互。
+
+#### 技术栈
+- 框架：React + TypeScript
+- 包管理器：pnpm
+- Web3 库：wagmi, viem
+- UI 框架：TailwindCSS
+
+#### 快速开始
+
+1. 安装依赖（在项目根目录下）：
+```bash
+pnpm install
+```
+
+2. 启动开发服务器：
+```bash
+cd packages/front-end
+pnpm start
+```
+
+应用将在 `http://localhost:3000` 运行。
+
+> 注意：在开发过程中可能会看到一些 source map 相关的警告，这些警告是无害的，不会影响应用的功能。
 
 
 如需参与开发或有任何问题，欢迎在 issues 区留言或联系发起人.

@@ -14,19 +14,19 @@ const Navbar: React.FC<NavbarProps> = () => {
       <nav className="bg-yuzu-cream yuzu-card-border mx-auto mb-4 max-w-5xl ">
         <div className="flex justify-between items-center py-6 px-10">
           <div className="flex gap-6">
-            <button className="font-bold text-[#F05A28] text-base leading-3 pt-1">
+            <button className="font-bold text-[#F05A28] text-base leading-3 pt-1 cursor-pointer">
               <img
                 src={require("../assets/logo.png")}
                 alt="logo"
                 className="w-8 h-8 inline mr-1 relative -top-[1px]"
               />
-              YUZU LOTTERY
+              <a href="#yuzu_lottery">YUZU LOTTERY</a>
             </button>
-            <button className="font-semibold text-[#102C24] text-base leading-[14px] opacity-50">
-              How It Works
+            <button className="font-semibold text-[#102C24] text-base leading-[14px] opacity-50 hover:opacity-100 hover:font-bold hover:text-[#F05A28] cursor-pointer">
+              <a href="#past_draw"> Past Draw</a>
             </button>
-            <button className="font-semibold text-[#102C24] text-base leading-[14px] opacity-50">
-              Past Draw
+            <button className="font-semibold text-[#102C24] text-base leading-[14px] opacity-50 hover:opacity-100 hover:font-bold hover:text-[#F05A28] cursor-pointer">
+              <a href="#how_it_works">How It Works</a>
             </button>
           </div>
           <div>

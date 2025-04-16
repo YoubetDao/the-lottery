@@ -4,8 +4,7 @@ import { expect } from "chai";
 import { ethers, artifacts } from "hardhat";
 
 describe("Lottery", function () {
-    async function deployFixture() {
-
+    async function deployContractsFixture() {
         const [owner, user1, user2] = await ethers.getSigners();
         // 部署 MockPoints 合约
         const MockPoints = await ethers.getContractFactory("MockPoints");
@@ -50,19 +49,19 @@ describe("Lottery", function () {
 
     describe("createRound", function () {
         it("should allow owner to create round", async () => {
-            const { lottery, roundStartTime, roundEndTime } = await loadFixture(deployFixture);
+            const { lottery, roundStartTime, roundEndTime } = await loadFixture(deployContractsFixture);
             await lottery.createRound(roundStartTime, roundEndTime, 1000, 1);
         });
 
         it("should revert if non-owner tries to create round", async () => {
-            const { lottery, user1, roundStartTime, roundEndTime } = await loadFixture(deployFixture);
+            const { lottery, user1, roundStartTime, roundEndTime } = await loadFixture(deployContractsFixture);
             await expect(
                 lottery.connect(user1).createRound(roundStartTime, roundEndTime, 1000, 2)
             ).to.be.revertedWithCustomError(lottery, "OwnableUnauthorizedAccount");
         });
 
         it("should revert if startTime >= endTime", async () => {
-            const { lottery } = await loadFixture(deployFixture);
+            const { lottery } = await loadFixture(deployContractsFixture);
             const now = await time.latest();
             await expect(
                 lottery.createRound(now + 3600, now + 3600, 1000, 1)
@@ -70,21 +69,21 @@ describe("Lottery", function () {
         });
 
         it("should revert if reward is 0", async () => {
-            const { lottery, roundStartTime, roundEndTime } = await loadFixture(deployFixture);
+            const { lottery, roundStartTime, roundEndTime } = await loadFixture(deployContractsFixture);
             await expect(
                 lottery.createRound(roundStartTime, roundEndTime, 0, 1)
             ).to.be.revertedWith("Reward amount must be greater than 0");
         });
 
         it("should revert if winner count is 0", async () => {
-            const { lottery, roundStartTime, roundEndTime } = await loadFixture(deployFixture);
+            const { lottery, roundStartTime, roundEndTime } = await loadFixture(deployContractsFixture);
             await expect(
                 lottery.createRound(roundStartTime, roundEndTime, 1000, 0)
             ).to.be.revertedWith("Winer count must be greater than 0");
         });
 
         it("should revert if winner count is 0", async () => {
-            const { lottery, roundStartTime, roundEndTime } = await loadFixture(deployFixture);
+            const { lottery, roundStartTime, roundEndTime } = await loadFixture(deployContractsFixture);
             await expect(
                 lottery.createRound(roundStartTime, roundEndTime, 1000, 0)
             ).to.be.revertedWith("Winer count must be greater than 0");
@@ -93,7 +92,7 @@ describe("Lottery", function () {
 
     describe("buy", function () {
         it("should allow user to buy and call consume()", async () => {
-            const { lottery, user1, roundStartTime, roundEndTime } = await loadFixture(deployFixture);
+            const { lottery, user1, roundStartTime, roundEndTime } = await loadFixture(deployContractsFixture);
 
             await lottery.createRound(roundStartTime, roundEndTime, 1000, 1);
             await time.increaseTo(roundStartTime + 2);
@@ -107,14 +106,14 @@ describe("Lottery", function () {
         });
 
         it("should revert if roundId is invalid", async () => {
-            const { lottery, user1 } = await loadFixture(deployFixture);
+            const { lottery, user1 } = await loadFixture(deployContractsFixture);
             await expect(
                 lottery.connect(user1).buy(999, 10, "0x", (await time.latest()) + 300)
             ).to.be.revertedWith("Invalid round ID");
         });
 
         it("should revert if amount is 0", async () => {
-            const { lottery, user1, roundStartTime, roundEndTime } = await loadFixture(deployFixture);
+            const { lottery, user1, roundStartTime, roundEndTime } = await loadFixture(deployContractsFixture);
             await lottery.createRound(roundStartTime, roundEndTime, 1000, 1);
             await time.increaseTo(roundStartTime + 2);
             const deadline = (await time.latest()) + 300;
@@ -124,7 +123,7 @@ describe("Lottery", function () {
         });
 
         it("should revert if round has not started", async () => {
-            const { lottery, user1, roundStartTime, roundEndTime } = await loadFixture(deployFixture);
+            const { lottery, user1, roundStartTime, roundEndTime } = await loadFixture(deployContractsFixture);
             await lottery.createRound(roundStartTime, roundEndTime, 1000, 1);
             await expect(
                 lottery.connect(user1).buy(1, 10, "0x", (await time.latest()) + 300)
@@ -132,7 +131,7 @@ describe("Lottery", function () {
         });
 
         it("should revert if round has ended", async () => {
-            const { lottery, user1, roundStartTime, roundEndTime } = await loadFixture(deployFixture);
+            const { lottery, user1, roundStartTime, roundEndTime } = await loadFixture(deployContractsFixture);
             await lottery.createRound(roundStartTime, roundEndTime, 1000, 1);
             await time.increaseTo(roundEndTime + 10);
             await expect(
@@ -141,7 +140,7 @@ describe("Lottery", function () {
         });
 
         it("should revert if deadline has passed", async () => {
-            const { lottery, user1, roundStartTime, roundEndTime } = await loadFixture(deployFixture);
+            const { lottery, user1, roundStartTime, roundEndTime } = await loadFixture(deployContractsFixture);
             await lottery.createRound(roundStartTime, roundEndTime, 1000, 1);
             await time.increaseTo(roundStartTime + 2);
             await expect(
@@ -150,7 +149,7 @@ describe("Lottery", function () {
         });
 
         it("should revert if round is closed", async () => {
-            const { lottery, user1, roundStartTime, roundEndTime } = await loadFixture(deployFixture);
+            const { lottery, user1, roundStartTime, roundEndTime } = await loadFixture(deployContractsFixture);
             await lottery.createRound(roundStartTime, roundEndTime, 1000, 1);
 
             await time.increaseTo(roundStartTime + 2);
@@ -168,7 +167,7 @@ describe("Lottery", function () {
 
     describe("draw", function () {
         it("should correctly draw winners", async () => {
-            const { lottery, user1, user2, roundStartTime, roundEndTime } = await loadFixture(deployFixture);
+            const { lottery, user1, user2, roundStartTime, roundEndTime } = await loadFixture(deployContractsFixture);
 
             await lottery.createRound(roundStartTime, roundEndTime, 1000, 1);
             await time.increaseTo(roundStartTime + 2);
@@ -183,7 +182,7 @@ describe("Lottery", function () {
         });
 
         it("should revert if non-owner tries to draw", async () => {
-            const { lottery, user1, roundStartTime, roundEndTime } = await loadFixture(deployFixture);
+            const { lottery, user1, roundStartTime, roundEndTime } = await loadFixture(deployContractsFixture);
 
             await lottery.createRound(roundStartTime, roundEndTime, 1000, 2);
             await time.increaseTo(roundStartTime + 1);
@@ -197,14 +196,14 @@ describe("Lottery", function () {
         });
 
         it("should revert if roundId is out of range", async () => {
-            const { lottery } = await loadFixture(deployFixture);
+            const { lottery } = await loadFixture(deployContractsFixture);
             await expect(
                 lottery.draw(999)
             ).to.be.revertedWith("Invalid round ID");
         });
 
         it("should revert if round has not ended", async () => {
-            const { lottery, roundStartTime, roundEndTime } = await loadFixture(deployFixture);
+            const { lottery, roundStartTime, roundEndTime } = await loadFixture(deployContractsFixture);
             await lottery.createRound(roundStartTime, roundEndTime, 1000, 1);
             await expect(
                 lottery.draw(0)
@@ -212,7 +211,7 @@ describe("Lottery", function () {
         });
 
         it("should revert if round is closed", async () => {
-            const { lottery, user1, roundStartTime, roundEndTime } = await loadFixture(deployFixture);
+            const { lottery, user1, roundStartTime, roundEndTime } = await loadFixture(deployContractsFixture);
             await lottery.createRound(roundStartTime, roundEndTime, 1000, 1);
             await time.increaseTo(roundStartTime + 2);
             const deadline = (await time.latest()) + 300;
@@ -225,7 +224,7 @@ describe("Lottery", function () {
         });
 
         it("should revert if no participants", async () => {
-            const { lottery, roundStartTime, roundEndTime } = await loadFixture(deployFixture);
+            const { lottery, roundStartTime, roundEndTime } = await loadFixture(deployContractsFixture);
             await lottery.createRound(roundStartTime, roundEndTime, 1000, 1);
             await time.increaseTo(roundEndTime + 10);
             await expect(

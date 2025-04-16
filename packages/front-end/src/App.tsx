@@ -29,16 +29,11 @@ const App: React.FC = () => {
               <Navbar />
               <Hero />
             </div>
-            <div
-              style={{
-                backgroundImage: `url(${require('./assets/bg-bottom.png')})`,
-                backgroundPosition: 'bottom center',
-                backgroundRepeat: 'no-repeat',
-                backgroundSize: '100%',
-                width: '100%'
-              }}
-            >
-              <div className="max-w-4xl px-4 md:px-8 m-auto z-10 relative b">
+            <div className="relative">
+              <div className="absolute inset-0" style={{
+                background: 'linear-gradient(180deg, #91C363 0%, #C2C7FB 100%)'
+              }} />
+              <div className="max-w-4xl px-4 md:px-8 m-auto z-10 relative">
                 <TicketInfo />
                 <DrawHistory />
                 <HowToPlay />

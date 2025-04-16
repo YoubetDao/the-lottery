@@ -1,5 +1,9 @@
 import { useState } from "react";
 import { DrawData } from "../types";
+import { ReactComponent as ChevronLeft } from "../assets/chevron-left.svg";
+import { ReactComponent as ChevronRight } from "../assets/chevron-right.svg";
+import { ReactComponent as ChevronEnd } from "../assets/chevron-end.svg";
+import { ReactComponent as ChevronDown } from "../assets/Icon-down.svg";
 
 const initialDrawData = {
   roundNumber: 123,
@@ -24,8 +28,8 @@ export const AllHistory = () => {
     console.log("Close draw history");
   };
   return (
-    <div className="bg-yuzu-cream rounded-lg p-6 text-black">
-      <div className="flex justify-between items-center mb-4">
+    <div className="bg-yuzu-cream rounded-[16px] pb-8 text-black border-b-[4px] border-solid border-[#102C24] border-t-2 border-x-2">
+      <div className="flex justify-between items-center mb-1 px-8 pt-8">
         <div>
           <span className="font-semibold text-[16px]">
             Round #{currentDraw.roundNumber}
@@ -36,14 +40,26 @@ export const AllHistory = () => {
             </span>
           )}
         </div>
-        <div className="flex gap-4">
-          <button onClick={handlePreviousDraw}>&lt;</button>
-          <button onClick={handleNextDraw}>&gt;</button>
-          <button onClick={handleClose}>×</button>
+        <div className="flex gap-2">
+          <div
+            className="cursor-pointer w-10 h-10"
+            onClick={handlePreviousDraw}
+          >
+            <ChevronLeft width={24} height={24} />
+          </div>
+
+          <div className="cursor-pointer w-10 h-10" onClick={handleNextDraw}>
+            <ChevronRight width={24} height={24} />
+          </div>
+          <div className="cursor-pointer w-10 h-10" onClick={handleClose}>
+            <ChevronEnd width={24} height={24} />
+          </div>
         </div>
       </div>
 
-      <div className="text-[16px] font-medium mb-4 color-[#102C24]">Drawn {currentDraw.drawDate}</div>
+      <div className="text-[16px] font-medium mb-4 pl-8 text-[#102C24]">
+        Drawn {currentDraw.drawDate}
+      </div>
 
       <div className="mb-4">
         <div className="flex justify-center mb-4">
@@ -72,79 +88,97 @@ export const AllHistory = () => {
 
       <div className="text-center">
         <button
-          className="text-green-600 flex items-center mx-auto"
-          onClick={() => setShowDetails(!showDetails)}
+          className={`text-[#008C50] font-semibold flex items-center mx-auto transition-opacity duration-300 ${
+            showDetails ? "opacity-0" : "opacity-100"
+          }`}
+          onClick={() => setShowDetails(true)}
         >
           Details
-          <svg
-            className={`h-4 w-4 ml-1 transform ${
-              showDetails ? "rotate-180" : ""
-            }`}
-            viewBox="0 0 20 20"
-            fill="currentColor"
-          >
-            <path
-              fillRule="evenodd"
-              d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-              clipRule="evenodd"
-            />
-          </svg>
+          <ChevronDown width={24} height={24} className="ml-1" />
         </button>
       </div>
 
-      {showDetails && (
-        <div className="mt-4 border-t pt-4">
+      <div className={`overflow-hidden ${showDetails ? "block" : "hidden"}`}>
+        <div className="mt-4 border-t p-8 bg-[#FFE6D8]">
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <h4 className="font-bold text-gray-500">Prize Pool</h4>
-              <p className="text-green-600 text-2xl font-bold">$557,762</p>
+              <div className="text-[#000] opacity-50 ">Prize Pool</div>
+              <div className="text-[#157433] text-[32px] font-bold">
+                $557,762
+              </div>
             </div>
             <div>
-              <h4 className="font-bold text-gray-500">Total Reward</h4>
-              <p className="font-bold text-xl">663</p>
+              <div className="text-[#000] opacity-50 ">Total Reward</div>
+              <div className="text-[#157433] font-bold text-[32px]">663</div>
             </div>
           </div>
           <div className="grid grid-cols-5 gap-2 mt-4">
             <div>
-              <p className="text-gray-500">Match Part 1</p>
-              <p className="text-green-600 font-bold">$762</p>
-              <p className="text-sm">78 Winning Tickets</p>
+              <div className="text-[#000] opacity-50">Match Part 1</div>
+              <div className="text-[#157433] font-bold text-[24px]">$762</div>
+              <div className="text-sm text-[#000] opacity-50 ">
+                78 Winning Tickets
+              </div>
             </div>
             <div>
-              <p className="text-gray-500">Match Part 2</p>
-              <p className="text-green-600 font-bold">$1,762</p>
-              <p className="text-sm">65 Winning Tickets</p>
+              <div className="text-[#000] opacity-50">Match Part 2</div>
+              <div className="text-[#157433] font-bold text-[24px]">$1,762</div>
+              <div className="text-sm text-[#000] opacity-50 ">
+                65 Winning Tickets
+              </div>
             </div>
             <div>
-              <p className="text-gray-500">Match Part 3</p>
-              <p className="text-green-600 font-bold">$2,071</p>
-              <p className="text-sm">65 Winning Tickets</p>
+              <div className="text-[#000] opacity-50">Match Part 3</div>
+              <div className="text-[#157433] font-bold text-[24px]">$2,071</div>
+              <div className="text-sm text-[#000] opacity-50 ">
+                65 Winning Tickets
+              </div>
             </div>
             <div>
-              <p className="text-gray-500">Match Part 4</p>
-              <p className="text-green-600 font-bold">$3,623</p>
-              <p className="text-sm">65 Winning Tickets</p>
+              <div className="text-[#000] opacity-50">Match Part 4</div>
+              <div className="text-[#157433] font-bold text-[24px]">$3,623</div>
+              <div className="text-sm text-[#000] opacity-50 ">
+                65 Winning Tickets
+              </div>
             </div>
             <div>
-              <p className="text-gray-500">Match Part 5</p>
-              <p className="text-green-600 font-bold">$4,623</p>
-              <p className="text-sm">65 Winning Tickets</p>
+              <div className="text-[#000] opacity-50">Match Part 5</div>
+              <div className="text-[#157433] font-bold text-[24px]">$4,623</div>
+              <div className="text-sm text-[#000] opacity-50 ">
+                65 Winning Tickets
+              </div>
             </div>
           </div>
-          <div className="grid grid-cols-2 gap-2 mt-4">
+          <div className="grid grid-cols-5 gap-2 mt-4">
             <div>
-              <p className="text-gray-500">Match Part 6</p>
-              <p className="text-green-600 font-bold">$8,623</p>
-              <p className="text-sm">65 Winning Tickets</p>
+              <div className="text-[#000] opacity-50">Match Part 6</div>
+              <div className="text-[#157433] font-bold text-[24px]">$8,623</div>
+              <div className="text-sm text-[#000] opacity-50">
+                65 Winning Tickets
+              </div>
             </div>
             <div>
-              <p className="text-gray-500">Burn</p>
-              <p className="text-green-600 font-bold">$18,623</p>
-              <p className="text-sm">65 Winning Tickets</p>
+              <div className="text-[#000] opacity-50">Burn</div>
+              <div className="text-[#157433] font-bold text-[24px]">
+                $18,623
+              </div>
+              <div className="text-sm text-[#000] opacity-50">
+                65 Winning Tickets
+              </div>
             </div>
           </div>
         </div>
-      )}
+
+        <div className="text-center mt-4">
+          <button
+            className="text-[#008C50] font-semibold flex items-center mx-auto"
+            onClick={() => setShowDetails(false)}
+          >
+            Hide Details
+            <ChevronDown width={24} height={24} className="ml-1 rotate-180" />
+          </button>
+        </div>
+      </div>
     </div>
   );
 };

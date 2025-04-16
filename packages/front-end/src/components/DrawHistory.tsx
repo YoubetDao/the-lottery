@@ -13,7 +13,7 @@ const DrawHistory: React.FC<DrawHistoryProps> = () => {
   return (
     <section id="past_draw" className="mt-[96px]">
       <div className="my-8">
-        <div className="flex mb-4 bg-yuzu-cream rounded-full p-[8px] relative">
+        <div className="flex mb-4 bg-yuzu-cream rounded-full p-[8px] relative outline outline-[2px] outline-[#102C24]">
           <img
             src={require("../assets/flower.png")}
             alt=""

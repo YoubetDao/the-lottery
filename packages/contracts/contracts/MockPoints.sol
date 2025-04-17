@@ -6,6 +6,8 @@ import "./Lottery.sol";
 contract MockPoints is IPoints {
     event ConsumeCalled(address holder, uint256 amount);
 
+    mapping(address => uint256) private balances;
+
     function consume(
         address holder,
         uint256 amount,
@@ -13,6 +15,16 @@ contract MockPoints is IPoints {
         uint256,
         bytes calldata
     ) external override {
+        require(balances[holder] >= amount, "Insufficient points");
+        balances[holder] -= amount;
         emit ConsumeCalled(holder, amount);
+    }
+
+    function mint(address to, uint256 amount) external {
+        balances[to] += amount;
+    }
+
+    function balanceOf(address user) external view returns (uint256) {
+        return balances[user];
     }
 }

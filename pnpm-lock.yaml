@@ -6,7 +6,11 @@ settings:
 
 importers:
 
-  .: {}
+  .:
+    devDependencies:
+      solidity-coverage:
+        specifier: ^0.8.14
+        version: 0.8.14(hardhat@2.22.19(bufferutil@4.0.9)(ts-node@10.9.2(@types/node@22.13.13)(typescript@5.8.2))(typescript@5.8.2)(utf-8-validate@5.0.10))
 
   packages/contracts:
     dependencies:

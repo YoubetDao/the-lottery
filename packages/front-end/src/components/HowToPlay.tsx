@@ -28,7 +28,6 @@ const HowToPlay: React.FC<HowToPlayProps> = ({
   ],
 }) => {
   return (
-
     <section id="how_it_works">
       <div className="my-8">
         <h2 className="text-2xl font-bold text-center mb-6">
@@ -59,14 +58,13 @@ const HowToPlay: React.FC<HowToPlayProps> = ({
         <img src="/123.jpg" alt="YUZU Mascot" className="h-20 w-20" />
       </div> */}
 
-      <div className="flex justify-center  h-[260px] relative">
-        <img 
-          src={require("../assets/how-to-play-logo.png")}
-          alt="How to play logo" 
-          className=" h-[260px] absolute -top-[32px]"
-        />
-      </div>
-    </div>
+        <div className="flex justify-center  h-[260px] relative">
+          <img
+            src={require("../assets/how-to-play-logo.png")}
+            alt="How to play logo"
+            className=" h-[260px] absolute -top-[32px]"
+          />
+        </div>
       </div>
     </section>
   );

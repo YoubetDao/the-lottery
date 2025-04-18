@@ -6,6 +6,7 @@
   NODE_VERSION = "22.14.0"
   NPM_FLAGS = "--version" 
   NETLIFY_USE_PNPM = "true"
+  CI = "false"
 
 [[redirects]]
   from = "/*"

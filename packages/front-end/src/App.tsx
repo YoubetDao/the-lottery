@@ -25,7 +25,7 @@ const App: React.FC = () => {
       <QueryClientProvider client={queryClient}>
         <RainbowKitProvider>
           <div className="min-h-screen bg-yuzu-dark-green relative">
-            <div className="bg-decorated  pb-[220px]">
+            <div className="bg-decorated  pb-[220px] bg-[#15372D]">
               <Navbar />
               <Hero />
             </div>
@@ -51,7 +51,7 @@ const App: React.FC = () => {
                     "linear-gradient(180deg, #91C363 0%, #C2C7FB 100%)",
                 }}
               />
-              <div className="w-[1006px] px-4 md:px-8 m-auto z-10 relative">
+              <div className="w-[1006px] m-auto z-10 relative">
                 <TicketInfo />
                 <DrawHistory />
                 <HowToPlay />

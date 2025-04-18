@@ -36,7 +36,7 @@ const TicketInfo: React.FC<TicketInfoProps> = ({
   };
 
   return (
-    <div className="flex justify-center items-start gap-6 my-8 w-full max-w-4xl mx-auto">
+    <div className="flex justify-center items-start gap-6 mb-8 w-full max-w-4xl mx-auto">
       {/* Left Panel - Ticket Info */}
       <div className="bg-amber-50 rounded-lg p-6 text-black flex-1 shadow-md border border-amber-100">
         <div className="text-center mb-4">

@@ -23,9 +23,30 @@ The smart contract part of this project is built using [Hardhat](https://hardhat
 
 ### Frontend
 
-(To be added)
+The frontend is built with React and uses modern web3 libraries for blockchain interaction.
 
-> Developers interested in contributing to the frontend are welcome to claim the task on According Work!
+#### Tech Stack
+- Framework: React with TypeScript
+- Package Manager: pnpm
+- Web3 Libraries: wagmi, viem
+- UI: TailwindCSS
+
+#### Getting Started
+
+1. Install dependencies (from project root):
+```bash
+pnpm install
+```
+
+2. Start the development server:
+```bash
+cd packages/front-end
+pnpm start
+```
+
+The app will be available at `http://localhost:3000`.
+
+> Note: You might see some source map warnings during development. These are harmless and won't affect the application's functionality.
 
 ---
 

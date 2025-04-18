@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { ContractInfo, TicketData, CountdownData } from "../types";
+import { ReactComponent as CopyIcon } from "../assets/copy-icon.svg";
 
 interface TicketInfoProps {
   initialContractInfo?: ContractInfo;
@@ -35,47 +36,62 @@ const TicketInfo: React.FC<TicketInfoProps> = ({
     });
   };
 
+  const [labelStyle, valueStyle] = [
+    "text-base leading-[1.6rem] font-poppins text-[#102C24]",
+    "flex items-center text-base font-poppins font-semibold leading-[1.6rem] text-[#157433]"
+  ]
+
   return (
     <div className="flex justify-center items-start gap-6 mb-8 w-full max-w-4xl mx-auto">
       {/* Left Panel - Ticket Info */}
-      <div className="bg-amber-50 rounded-lg p-6 text-black flex-1 shadow-md border border-amber-100">
-        <div className="text-center mb-4">
-          <div className="text-xl font-bold text-gray-700 mt-2">
-            Get Your Ticket Now!
+      <div className="relative w-[490px]">
+        <img
+          src={require("../assets/ticket-info-panel-bear.png")}
+          alt="Ticket Info"
+          className="absolute left-1/2 -translate-x-1/2 z-10 w-[160px] h-auto pointer-events-none"
+          style={{
+            top: `-${252 * 0.84}px`,
+          }}
+        />
+        <div className="bg-amber-50 rounded-[16px] p-6 text-black shadow-md border border-amber-100 relative z-20 overflow-hidden w-[490px]">
+          <div className="text-center mb-4">
+            <div className="text-base leading-[1.6rem] font-poppins font-bold  text-[#102C24] mt-2">
+              Get Your Ticket Now!
+            </div>
+            <div className="text-[2.5rem] leading-[3rem] font-poppins font-bold text-[#157433] mt-4">
+              {countdown.days}d {countdown.hours}h {countdown.minutes}m
+            </div>
+            <div className="text-base leading-[1.6rem] font-poppins font-medium text-[#102C24] mt-2">
+              Until the draw
+            </div>
           </div>
-          <div className="text-4xl font-bold text-green-700 mt-4">
-            {countdown.days}d {countdown.hours}h {countdown.minutes}m
-          </div>
-          <div className="text-sm mt-2 font-medium text-gray-600">
-            Until the draw
-          </div>
-        </div>
-        <div className="text-sm mt-4">
-          <div className="flex justify-between mb-3">
-            <span className="font-medium text-gray-700">Contract Address</span>
-            <span className="flex items-center font-medium text-green-700">
-              {contractInfo.address.replace("...", "…")}
-              <button
-                className="ml-1 text-green-700"
-                onClick={() =>
-                  navigator.clipboard.writeText(contractInfo.address)
-                }
-              >
-                📋
-              </button>
-            </span>
-          </div>
-          <div className="flex justify-between mb-3">
-            <span className="font-medium text-gray-700">Next Draw</span>
-            <span className="font-medium text-green-700">
-              {contractInfo.nextDraw}
-            </span>
-          </div>
-          <div className="flex justify-between">
-            <span className="font-medium text-gray-700">Your Ticket</span>
-            <span className="font-medium text-green-700">
-              {contractInfo.userTickets}
-            </span>
+          <div className="text-sm mt-4">
+            <div className="flex justify-between mb-3">
+              <span className={labelStyle}>Contract Address</span>
+              <span className={valueStyle}>
+                {contractInfo.address.replace("...", "…")}
+                <button
+                  className="ml-1 text-green-700"
+                  onClick={() =>
+                    navigator.clipboard.writeText(contractInfo.address)
+                  }
+                >
+                <CopyIcon />
+                </button>
+              </span>
+            </div>
+            <div className="flex justify-between mb-3">
+              <span className={labelStyle}>Next Draw</span>
+              <span className={valueStyle}>
+                {contractInfo.nextDraw}
+              </span>
+            </div>
+            <div className="flex justify-between">
+              <span className={labelStyle}>Your Ticket</span>
+              <span className={valueStyle}>
+                {contractInfo.userTickets}
+              </span>
+            </div>
           </div>
         </div>
       </div>

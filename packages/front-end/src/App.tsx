@@ -25,7 +25,7 @@ const App: React.FC = () => {
       <QueryClientProvider client={queryClient}>
         <RainbowKitProvider>
           <div className="min-h-screen bg-yuzu-dark-green relative">
-            <div className="bg-decorated  pb-[168px] ">
+            <div className="bg-decorated  pb-[168px]">
               <Navbar />
               <Hero />
             </div>
@@ -37,7 +37,6 @@ const App: React.FC = () => {
                 <TicketInfo />
                 <DrawHistory />
                 <HowToPlay />
-                <Footer />
               </div>
             </div>
           </div>

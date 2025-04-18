@@ -17,7 +17,7 @@ const DrawHistory: React.FC<DrawHistoryProps> = () => {
           <img
             src={require("../assets/flower.png")}
             alt=""
-            className="absolute top-[-64px] left-[25%] -z-10"
+            className="absolute top-[-64px] left-[30%] -z-10"
           />
 
           <button

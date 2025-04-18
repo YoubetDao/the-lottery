@@ -38,22 +38,22 @@ const TicketInfo: React.FC<TicketInfoProps> = ({
 
   const [labelStyle, valueStyle] = [
     "text-base leading-[1.6rem] font-poppins text-[#102C24]",
-    "flex items-center text-base font-poppins font-semibold leading-[1.6rem] text-[#157433]"
-  ]
+    "flex items-center text-base font-poppins font-semibold leading-[1.6rem] text-[#157433]",
+  ];
 
   return (
     <div className="flex justify-center items-start gap-6 mb-8 w-full max-w-4xl mx-auto">
       {/* Left Panel - Ticket Info */}
-      <div className="relative w-[490px]">
+      <div className="relative w-[490px] top-6">
         <img
           src={require("../assets/ticket-info-panel-bear.png")}
           alt="Ticket Info"
-          className="absolute left-1/2 -translate-x-1/2 z-10 w-[160px] h-auto pointer-events-none"
+          className="absolute left-1/2 -translate-x-1/2 z-10 w-[160px] h-auto pointer-events-none "
           style={{
             top: `-${252 * 0.84}px`,
           }}
         />
-        <div className="bg-amber-50 rounded-[16px] p-6 text-black shadow-md border border-amber-100 relative z-20 overflow-hidden w-[490px]">
+        <div className="bg-amber-50 rounded-[16px] p-6 text-black relative z-20 overflow-hidden w-[490px] border-[2px] border-[#102C24] shadow-[0_3px_0_rgba(0,0,0,1)]">
           <div className="text-center mb-4">
             <div className="text-base leading-[1.6rem] font-poppins font-bold  text-[#102C24] mt-2">
               Get Your Ticket Now!
@@ -76,38 +76,36 @@ const TicketInfo: React.FC<TicketInfoProps> = ({
                     navigator.clipboard.writeText(contractInfo.address)
                   }
                 >
-                <CopyIcon />
+                  <CopyIcon />
                 </button>
               </span>
             </div>
             <div className="flex justify-between mb-3">
               <span className={labelStyle}>Next Draw</span>
-              <span className={valueStyle}>
-                {contractInfo.nextDraw}
-              </span>
+              <span className={valueStyle}>{contractInfo.nextDraw}</span>
             </div>
             <div className="flex justify-between">
               <span className={labelStyle}>Your Ticket</span>
-              <span className={valueStyle}>
-                {contractInfo.userTickets}
-              </span>
+              <span className={valueStyle}>{contractInfo.userTickets}</span>
             </div>
           </div>
         </div>
       </div>
 
       {/* Right Panel - Ticket Purchase */}
-      <div className="flex-1">
-        <div className="bg-[#FFA706] rounded-t-lg p-4 border-[2px] border-[#102C24]">
+      <div className="relative top-[-120px]">
+        <div className="bg-[#FFA706] rounded-t-[16px] px-8 py-6 border-[2px] w-[490px] border-[#102C24]">
           <div className="flex justify-between items-center mb-2">
             <div className="text-[#102C24] text-[14px] font-medium ">Buy</div>
             {/* <div className="text-[#2D6A4F] font-medium">MAX {ticketData.maxLimit.toLocaleString()} YUZU</div> */}
             <div className="font-medium flex items-center">
               <span className="text-[#157433] font-bold">MAX</span>
-              <span className="ml-2 text-[#102C24] font-bold">{ticketData.maxLimit.toLocaleString()} YUZU</span>
+              <span className="ml-2 text-[#102C24] font-bold">
+                {ticketData.maxLimit.toLocaleString()} YUZU
+              </span>
             </div>
           </div>
-          
+
           <div className="flex justify-between items-center mb-4">
             <input
               type="number"
@@ -152,7 +150,7 @@ const TicketInfo: React.FC<TicketInfoProps> = ({
           </div>
         </div>
 
-        <div className="bg-[#157433] rounded-b-lg p-4 border-x-[2px] border-t-[1px] border-[#102C24] shadow-[0_4px_0_rgba(0,0,0,1)]">
+        <div className="bg-[#157433] rounded-b-[16px] px-8 py-6 border-x-[2px] border-t-[1px] border-[#102C24] shadow-[0_4px_0_rgba(0,0,0,1)]">
           <div className="flex justify-between mb-4 text-white">
             <span>Cost</span>
             <span>{ticketData.quantity} YUZU</span>

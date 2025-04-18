@@ -29,7 +29,7 @@ const HowToPlay: React.FC<HowToPlayProps> = ({
 }) => {
   return (
     <section id="how_it_works">
-      <div className="my-8">
+      <div className="mt-8">
         <h2 className="text-2xl font-bold text-center mb-6">
           {/* How to <span className="text-yuzu-green">Play</span> */}
           How to <span className="text-[#2D6A4F]">Play</span>

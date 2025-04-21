@@ -14,7 +14,7 @@ abstract contract LotteryDataLayout {
         // Reward amount
         uint256 rewardAmount;
         // Number of winners
-        uint256 winerCount;
+        uint256 winnerCount;
         // Participating users, each user has one slot, used for the draw
         address[] users;
         // Amount of yuzu spent by each user
@@ -33,6 +33,22 @@ abstract contract LotteryDataLayout {
         uint256[] winNumbers;
         // Winning users
         address[] winnerUsers;
+    }
+
+    // @dev Represents the history of a user's participation in a round
+    struct UserHistory {
+        // The round ID
+        uint256 roundId;
+        // Round start time
+        uint256 startTime;
+        // Round end time
+        uint256 endTime;
+        // The amount of yuzu spent
+        uint256 totalAmountSpent;
+        // The number of tickets owned
+        uint256 totalTicketCount;
+        // win ticket count
+        uint256 winningTicketCount;
     }
 
     // @dev Emitted when a new round is created
@@ -79,6 +95,9 @@ abstract contract LotteryDataLayout {
 
     // @dev The array of rounds, support parallel rounds
     Round[] public rounds;
+
+    // @dev The mapping of user addresses to their history
+    mapping(address => uint256[]) public userHistories;
 
     // Consume reason code for lottery ticket purchase
     bytes32 public constant LOTTERY_TICKET_PURCHASE =

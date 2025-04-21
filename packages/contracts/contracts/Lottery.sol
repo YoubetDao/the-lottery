@@ -4,6 +4,7 @@ pragma solidity ^0.8.0;
 import "./LotteryDataLayout.sol";
 import "./ILottery.sol";
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/utils/math/Math.sol";
 
 // YuzuPoints interface
 interface IPoints {
@@ -25,22 +26,62 @@ contract Lottery is LotteryDataLayout, ILottery, Ownable {
         points = IPoints(_points);
     }
 
+    function getUserHistory(address walletAddress, uint256 page, uint256 pageSize) external view override returns (UserHistory[] memory) {
+        require(page > 0, "Page must be greater than 0");
+        require(pageSize > 0, "Page size must be greater than 0");
+
+        uint256 startIndex = (page - 1) * pageSize;
+        uint256 endIndex = Math.min(userHistories[walletAddress].length,  startIndex + pageSize);
+        
+        uint256 resultCount = endIndex - startIndex;
+        
+        UserHistory[] memory result = new UserHistory[](resultCount);
+        
+        for (uint256 i = 0; i < resultCount; i++) {
+            uint256 roundId = userHistories[walletAddress][startIndex + i];
+
+            Round storage round = rounds[roundId];
+
+            result[i] = UserHistory({       
+                roundId: roundId,
+                startTime: round.startTime,
+                endTime: round.endTime,
+                totalAmountSpent: round.usersMap[walletAddress],
+                totalTicketCount: round.ticketsCount[walletAddress],
+                winningTicketCount: getUserWinCount(roundId, walletAddress)
+            });
+        }
+
+        return result;
+    }
+
+    function getUserWinCount(uint256 roundId, address user) public view returns (uint256 winCount) {
+        Round storage round = rounds[roundId];
+
+        for (uint256 i = 0; i < round.winnerUsers.length; i++) {
+            if (round.winnerUsers[i] == user) {
+                winCount++;
+            }
+        }
+        return winCount;
+    }
+
     function createRound(
         uint256 startTime,
         uint256 endTime,
         uint256 rewardAmount,
-        uint256 winerCount
-    ) external virtual override onlyOwner {
+        uint256 winnerCount
+    ) external override onlyOwner {
         require(startTime < endTime, "Start time must be before end time");
         require(rewardAmount > 0, "Reward amount must be greater than 0");
-        require(winerCount > 0, "Winer count must be greater than 0");
+        require(winnerCount > 0, "Winer count must be greater than 0");
 
         Round storage round = rounds.push();
 
         round.startTime = startTime;
         round.endTime = endTime;
         round.rewardAmount = rewardAmount;
-        round.winerCount = winerCount;
+        round.winnerCount = winnerCount;
         round.isOpen = true;
 
         emit RoundCreated(
@@ -48,7 +89,7 @@ contract Lottery is LotteryDataLayout, ILottery, Ownable {
             startTime,
             endTime,
             rewardAmount,
-            winerCount
+            winnerCount
         );
     }
 
@@ -88,6 +129,9 @@ contract Lottery is LotteryDataLayout, ILottery, Ownable {
         if (round.usersMap[msg.sender] == 0) {
             round.users.push(msg.sender);
             round.accumulatedParticipants++;
+            
+            // mark user history
+            userHistories[msg.sender].push(roundId);
         }
 
         // Update user's spent amount
@@ -121,14 +165,14 @@ contract Lottery is LotteryDataLayout, ILottery, Ownable {
         Round storage round = rounds[roundId];
         require(block.timestamp >= round.endTime, "Round not ended");
         require(round.isOpen, "Round already closed");
-        require(round.winerCount > 0, "No winners specified");
+        require(round.winnerCount > 0, "No winners specified");
 
         uint256 participantCount = round.users.length;
         require(participantCount > 0, "No participants");
 
         // 选择多个获奖者
-        address[] memory winners = new address[](round.winerCount);
-        for (uint256 i = 0; i < round.winerCount; i++) {
+        address[] memory winners = new address[](round.winnerCount);
+        for (uint256 i = 0; i < round.winnerCount; i++) {
             uint256 randomIndex = uint256(
                 keccak256(
                     abi.encodePacked(
@@ -147,4 +191,5 @@ contract Lottery is LotteryDataLayout, ILottery, Ownable {
         round.isOpen = false;
         emit WinnersSelected(roundId, winners);
     }
+
 }

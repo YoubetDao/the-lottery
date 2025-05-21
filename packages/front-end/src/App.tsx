@@ -10,11 +10,6 @@ import { eduChain, eduTestnet, projectId } from "./config";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import "@rainbow-me/rainbowkit/styles.css";
 
-declare module "wagmi" {
-  interface Register {
-    config: typeof config;
-  }
-}
 
 export const config = getDefaultConfig({
   appName: "Yuzu Lottery",

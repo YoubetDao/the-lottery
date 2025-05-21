@@ -36,6 +36,15 @@ const TicketInfo: React.FC<TicketInfoProps> = ({
     });
   };
 
+  const handleBuyTickets = async () => {
+    try {
+      // TODO: Implement ticket purchase logic here
+      console.log(`Purchasing ${ticketData.quantity} tickets...`);
+    } catch (error) {
+      console.error("Error purchasing tickets:", error);
+    }
+  };
+
   const [labelStyle, valueStyle] = [
     "text-base leading-[1.6rem] font-poppins text-[#102C24]",
     "flex items-center text-base font-poppins font-semibold leading-[1.6rem] text-[#157433]",
@@ -158,7 +167,7 @@ const TicketInfo: React.FC<TicketInfoProps> = ({
 
           <button
             className="bg-[#C2F970] hover:bg-[#B5EC63] w-full py-3 rounded-lg text-[#102C24] font-bold mb-2  shadow-[0_3px_0_rgba(0,0,0,1)]  border-2 border-[#102C24]"
-            onClick={() => console.log(`Buying ${ticketData.quantity} tickets`)}
+            onClick={handleBuyTickets}
           >
             Buy {ticketData.quantity} Tickets
           </button>

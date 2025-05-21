@@ -23,7 +23,22 @@ abstract contract ILottery {
 
     // @dev Draw the winning numbers
     function draw(uint256 roundId) external virtual;
-    
+
     // @dev Get the lottery history for a specific address
-    function getUserHistory(address walletAddress, uint256 page, uint256 pageSize) external view virtual returns (LotteryDataLayout.UserHistory[] memory);
+    function getUserHistory(
+        address walletAddress,
+        uint256 page,
+        uint256 pageSize
+    ) external view virtual returns (LotteryDataLayout.UserHistory[] memory);
+
+    // @dev Get the last round of the lottery
+    function getLastRoundId() external view virtual returns (uint256);
+
+    // @dev Generate a digest for signature verification
+    function generateDigest(
+        address user,
+        uint256 amount,
+        uint256 reason,
+        uint256 deadline
+    ) external view virtual returns (bytes32);
 }

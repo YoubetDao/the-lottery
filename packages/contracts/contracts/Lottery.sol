@@ -5,9 +5,14 @@ import "./LotteryDataLayout.sol";
 import "./ILottery.sol";
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/math/Math.sol";
+import "@openzeppelin/contracts/utils/Strings.sol";
+import {EIP712} from "@openzeppelin/contracts/utils/cryptography/EIP712.sol";
+import {SignatureChecker} from "@openzeppelin/contracts/utils/cryptography/SignatureChecker.sol";
 
 // YuzuPoints interface
 interface IPoints {
+    function nonces(bytes32 hashHolderSpender) external view returns (uint256);
+
     function consume(
         address holder,
         uint256 amount,
@@ -15,34 +20,54 @@ interface IPoints {
         uint256 deadline,
         bytes calldata signature
     ) external;
+
+    function deposit(
+        address holder,
+        uint256 amount,
+        bytes32 depositReasonCode
+    ) external;
+
+    function balances(address user) external view returns (uint256);
 }
 
-contract Lottery is LotteryDataLayout, ILottery, Ownable {
+contract Lottery is LotteryDataLayout, ILottery, Ownable, EIP712 {
+    using Strings for uint256;
+
     // YuzuPoints contract address
     IPoints public points;
 
-    constructor(address initialOwner, address _points) Ownable(initialOwner) {
+    constructor(
+        address initialOwner,
+        address _points
+    ) Ownable(initialOwner) EIP712("Lottery", "1") {
         require(_points != address(0), "Invalid points contract address");
         points = IPoints(_points);
     }
 
-    function getUserHistory(address walletAddress, uint256 page, uint256 pageSize) external view override returns (UserHistory[] memory) {
+    function getUserHistory(
+        address walletAddress,
+        uint256 page,
+        uint256 pageSize
+    ) external view override returns (UserHistory[] memory) {
         require(page > 0, "Page must be greater than 0");
         require(pageSize > 0, "Page size must be greater than 0");
 
         uint256 startIndex = (page - 1) * pageSize;
-        uint256 endIndex = Math.min(userHistories[walletAddress].length,  startIndex + pageSize);
-        
+        uint256 endIndex = Math.min(
+            userHistories[walletAddress].length,
+            startIndex + pageSize
+        );
+
         uint256 resultCount = endIndex - startIndex;
-        
+
         UserHistory[] memory result = new UserHistory[](resultCount);
-        
+
         for (uint256 i = 0; i < resultCount; i++) {
             uint256 roundId = userHistories[walletAddress][startIndex + i];
 
             Round storage round = rounds[roundId];
 
-            result[i] = UserHistory({       
+            result[i] = UserHistory({
                 roundId: roundId,
                 startTime: round.startTime,
                 endTime: round.endTime,
@@ -55,7 +80,10 @@ contract Lottery is LotteryDataLayout, ILottery, Ownable {
         return result;
     }
 
-    function getUserWinCount(uint256 roundId, address user) public view returns (uint256 winCount) {
+    function getUserWinCount(
+        uint256 roundId,
+        address user
+    ) public view returns (uint256 winCount) {
         Round storage round = rounds[roundId];
 
         for (uint256 i = 0; i < round.winnerUsers.length; i++) {
@@ -117,10 +145,16 @@ contract Lottery is LotteryDataLayout, ILottery, Ownable {
         require(deadline > block.timestamp, "Deadline must be in the future");
 
         // call Points contract consume function, use signature for authorization
+        bytes32 consumeReasonCode = bytes32(
+            bytes(
+                string(abi.encodePacked(PREFIX_REASON_CODE, roundId.toString()))
+            )
+        );
+
         points.consume(
             msg.sender,
             amount,
-            LOTTERY_TICKET_PURCHASE,
+            consumeReasonCode,
             deadline,
             signature
         );
@@ -129,7 +163,7 @@ contract Lottery is LotteryDataLayout, ILottery, Ownable {
         if (round.usersMap[msg.sender] == 0) {
             round.users.push(msg.sender);
             round.accumulatedParticipants++;
-            
+
             // mark user history
             userHistories[msg.sender].push(roundId);
         }
@@ -192,4 +226,84 @@ contract Lottery is LotteryDataLayout, ILottery, Ownable {
         emit WinnersSelected(roundId, winners);
     }
 
+    function getLastRoundId() external view override returns (uint256 result) {
+        result = rounds.length - 1;
+    }
+
+    function generateDigest(
+        address holder,
+        uint256 roundId,
+        uint256 amount,
+        uint256 deadline
+    ) external view override returns (bytes32) {
+        address spender = address(this);
+        bytes32 nonceKey = keccak256(abi.encodePacked(holder, spender));
+
+        uint256 nonce = points.nonces(nonceKey);
+
+        bytes32 consumeReasonCode = bytes32(
+            bytes(
+                string(abi.encodePacked(PREFIX_REASON_CODE, roundId.toString()))
+            )
+        );
+
+        bytes32 digest = _hashTypedDataV4(
+            keccak256(
+                abi.encode(
+                    CONSUME_TYPEHASH,
+                    holder,
+                    spender,
+                    amount,
+                    consumeReasonCode,
+                    deadline,
+                    nonce
+                )
+            )
+        );
+
+        return digest;
+    }
+
+    function check(
+        address holder,
+        uint256 roundId,
+        uint256 amount,
+        uint256 deadline,
+        bytes calldata signature
+    ) external view returns (uint256) {
+        if (block.timestamp > deadline) {
+            return 1;
+        }
+        address spender = address(this);
+        bytes32 nonceKey = keccak256(abi.encodePacked(holder, spender));
+        uint256 nonce = points.nonces(nonceKey);
+
+        bytes32 consumeReasonCode = bytes32(
+            bytes(
+                string(abi.encodePacked(PREFIX_REASON_CODE, roundId.toString()))
+            )
+        );
+        bytes32 digest = _hashTypedDataV4(
+            keccak256(
+                abi.encode(
+                    CONSUME_TYPEHASH,
+                    holder,
+                    spender,
+                    amount,
+                    consumeReasonCode,
+                    deadline,
+                    nonce
+                )
+            )
+        );
+        bool isValid = SignatureChecker.isValidSignatureNow(
+            holder,
+            digest,
+            signature
+        );
+        if (!isValid) {
+            return 2;
+        }
+        return 3;
+    }
 }

@@ -18,7 +18,7 @@ async function main() {
 	const Lottery = await ethers.getContractFactory("Lottery");
 	const lottery = await Lottery.deploy(
 		deployer.address,
-		CustomConfig[networkName].pointsContract,
+		CustomConfig[networkName].pointsContract
 	);
 
 	console.log("Lottery contract deployed to:", await lottery.getAddress());

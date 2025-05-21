@@ -6,7 +6,6 @@ import "./ILottery.sol";
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/math/Math.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
-import {EIP712} from "@openzeppelin/contracts/utils/cryptography/EIP712.sol";
 import {SignatureChecker} from "@openzeppelin/contracts/utils/cryptography/SignatureChecker.sol";
 
 // YuzuPoints interface
@@ -30,16 +29,13 @@ interface IPoints {
     function balances(address user) external view returns (uint256);
 }
 
-contract Lottery is LotteryDataLayout, ILottery, Ownable, EIP712 {
+contract Lottery is LotteryDataLayout, ILottery, Ownable {
     using Strings for uint256;
 
     // YuzuPoints contract address
     IPoints public points;
 
-    constructor(
-        address initialOwner,
-        address _points
-    ) Ownable(initialOwner) EIP712("Lottery", "1") {
+    constructor(address initialOwner, address _points) Ownable(initialOwner) {
         require(_points != address(0), "Invalid points contract address");
         points = IPoints(_points);
     }
@@ -127,10 +123,10 @@ contract Lottery is LotteryDataLayout, ILottery, Ownable, EIP712 {
         bytes calldata signature,
         uint256 deadline
     ) external override {
-        require(roundId > 0 && roundId <= rounds.length, "Invalid round ID");
+        require(roundId >= 0 && roundId < rounds.length, "Invalid round ID");
         require(amount > 0, "Amount must be greater than 0");
 
-        Round storage round = rounds[roundId - 1];
+        Round storage round = rounds[roundId];
         require(round.isOpen, "Round is not open");
         require(block.timestamp >= round.startTime, "Round has not started");
         require(block.timestamp <= round.endTime, "Round has ended");
@@ -230,80 +226,23 @@ contract Lottery is LotteryDataLayout, ILottery, Ownable, EIP712 {
         result = rounds.length - 1;
     }
 
-    function generateDigest(
+    function generateSigParam(
         address holder,
-        uint256 roundId,
-        uint256 amount,
-        uint256 deadline
-    ) external view override returns (bytes32) {
+        uint256 roundId
+    )
+        external
+        view
+        override
+        returns (string memory consumeReasonCode, uint256 nonce)
+    {
         address spender = address(this);
         bytes32 nonceKey = keccak256(abi.encodePacked(holder, spender));
 
-        uint256 nonce = points.nonces(nonceKey);
+        nonce = points.nonces(nonceKey);
 
-        bytes32 consumeReasonCode = bytes32(
-            bytes(
-                string(abi.encodePacked(PREFIX_REASON_CODE, roundId.toString()))
-            )
+        // roundId is 0-based, but the consume reason code is 1-based
+        consumeReasonCode = string(
+            abi.encodePacked(PREFIX_REASON_CODE, (roundId + 1).toString())
         );
-
-        bytes32 digest = _hashTypedDataV4(
-            keccak256(
-                abi.encode(
-                    CONSUME_TYPEHASH,
-                    holder,
-                    spender,
-                    amount,
-                    consumeReasonCode,
-                    deadline,
-                    nonce
-                )
-            )
-        );
-
-        return digest;
-    }
-
-    function check(
-        address holder,
-        uint256 roundId,
-        uint256 amount,
-        uint256 deadline,
-        bytes calldata signature
-    ) external view returns (uint256) {
-        if (block.timestamp > deadline) {
-            return 1;
-        }
-        address spender = address(this);
-        bytes32 nonceKey = keccak256(abi.encodePacked(holder, spender));
-        uint256 nonce = points.nonces(nonceKey);
-
-        bytes32 consumeReasonCode = bytes32(
-            bytes(
-                string(abi.encodePacked(PREFIX_REASON_CODE, roundId.toString()))
-            )
-        );
-        bytes32 digest = _hashTypedDataV4(
-            keccak256(
-                abi.encode(
-                    CONSUME_TYPEHASH,
-                    holder,
-                    spender,
-                    amount,
-                    consumeReasonCode,
-                    deadline,
-                    nonce
-                )
-            )
-        );
-        bool isValid = SignatureChecker.isValidSignatureNow(
-            holder,
-            digest,
-            signature
-        );
-        if (!isValid) {
-            return 2;
-        }
-        return 3;
     }
 }

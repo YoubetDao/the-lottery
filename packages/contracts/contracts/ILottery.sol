@@ -34,11 +34,13 @@ abstract contract ILottery {
     // @dev Get the last round of the lottery
     function getLastRoundId() external view virtual returns (uint256);
 
-    // @dev Generate a digest for signature verification
-    function generateDigest(
-        address user,
-        uint256 amount,
-        uint256 reason,
-        uint256 deadline
-    ) external view virtual returns (bytes32);
+    // @dev Generate parameters for signature verification
+    function generateSigParam(
+        address holder,
+        uint256 roundId
+    )
+        external
+        view
+        virtual
+        returns (string memory consumeReasonCode, uint256 nonce);
 }

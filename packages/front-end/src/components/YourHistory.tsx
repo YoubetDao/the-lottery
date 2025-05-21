@@ -32,12 +32,13 @@ export const YourHistory = () => {
       enabled: !!address,
     },
   }) as { data: UserHistoryItem[] | undefined };
+  const hasNextPage = data?.length === Number(pageSize);
   const handlePreviousDraw = () => {
     if (page > 1n) setPage(page - 1n);
   };
 
   const handleNextDraw = () => {
-    setPage(page + 1n);
+    hasNextPage && setPage(page + 1n);
   };
 
   // console.log("data:", data);

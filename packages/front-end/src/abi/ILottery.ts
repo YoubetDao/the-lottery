@@ -16,11 +16,6 @@ export const ILotteryABI = [
 		type: "constructor",
 	},
 	{
-		inputs: [],
-		name: "InvalidShortString",
-		type: "error",
-	},
-	{
 		inputs: [
 			{
 				internalType: "address",
@@ -40,17 +35,6 @@ export const ILotteryABI = [
 			},
 		],
 		name: "OwnableUnauthorizedAccount",
-		type: "error",
-	},
-	{
-		inputs: [
-			{
-				internalType: "string",
-				name: "str",
-				type: "string",
-			},
-		],
-		name: "StringTooLong",
 		type: "error",
 	},
 	{
@@ -76,12 +60,6 @@ export const ILotteryABI = [
 			},
 		],
 		name: "DrawClosed",
-		type: "event",
-	},
-	{
-		anonymous: false,
-		inputs: [],
-		name: "EIP712DomainChanged",
 		type: "event",
 	},
 	{
@@ -280,49 +258,6 @@ export const ILotteryABI = [
 		type: "function",
 	},
 	{
-		inputs: [],
-		name: "eip712Domain",
-		outputs: [
-			{
-				internalType: "bytes1",
-				name: "fields",
-				type: "bytes1",
-			},
-			{
-				internalType: "string",
-				name: "name",
-				type: "string",
-			},
-			{
-				internalType: "string",
-				name: "version",
-				type: "string",
-			},
-			{
-				internalType: "uint256",
-				name: "chainId",
-				type: "uint256",
-			},
-			{
-				internalType: "address",
-				name: "verifyingContract",
-				type: "address",
-			},
-			{
-				internalType: "bytes32",
-				name: "salt",
-				type: "bytes32",
-			},
-			{
-				internalType: "uint256[]",
-				name: "extensions",
-				type: "uint256[]",
-			},
-		],
-		stateMutability: "view",
-		type: "function",
-	},
-	{
 		inputs: [
 			{
 				internalType: "address",
@@ -334,23 +269,18 @@ export const ILotteryABI = [
 				name: "roundId",
 				type: "uint256",
 			},
-			{
-				internalType: "uint256",
-				name: "amount",
-				type: "uint256",
-			},
-			{
-				internalType: "uint256",
-				name: "deadline",
-				type: "uint256",
-			},
 		],
-		name: "generateDigest",
+		name: "generateSigParam",
 		outputs: [
 			{
 				internalType: "bytes32",
-				name: "",
+				name: "consumeReasonCode",
 				type: "bytes32",
+			},
+			{
+				internalType: "uint256",
+				name: "nonce",
+				type: "uint256",
 			},
 		],
 		stateMutability: "view",

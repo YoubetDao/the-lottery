@@ -141,11 +141,7 @@ contract Lottery is LotteryDataLayout, ILottery, Ownable {
         require(deadline > block.timestamp, "Deadline must be in the future");
 
         // call Points contract consume function, use signature for authorization
-        bytes32 consumeReasonCode = bytes32(
-            bytes(
-                string(abi.encodePacked(PREFIX_REASON_CODE, roundId.toString()))
-            )
-        );
+        (bytes32 consumeReasonCode, ) = generateSigParam(msg.sender, roundId);
 
         points.consume(
             msg.sender,
@@ -229,20 +225,32 @@ contract Lottery is LotteryDataLayout, ILottery, Ownable {
     function generateSigParam(
         address holder,
         uint256 roundId
-    )
-        external
-        view
-        override
-        returns (string memory consumeReasonCode, uint256 nonce)
-    {
+    ) public view override returns (bytes32 consumeReasonCode, uint256 nonce) {
         address spender = address(this);
         bytes32 nonceKey = keccak256(abi.encodePacked(holder, spender));
 
         nonce = points.nonces(nonceKey);
 
         // roundId is 0-based, but the consume reason code is 1-based
-        consumeReasonCode = string(
+        string memory reasonStr = string(
             abi.encodePacked(PREFIX_REASON_CODE, (roundId + 1).toString())
         );
+
+        consumeReasonCode = leftPadToBytes32(reasonStr);
+    }
+
+    function leftPadToBytes32(
+        string memory source
+    ) internal pure returns (bytes32 result) {
+        bytes memory strBytes = bytes(source);
+        require(strBytes.length <= 32, "String too long");
+
+        uint256 len = strBytes.length;
+        uint256 shift = (32 - len) * 8; // 位移多少位
+
+        assembly {
+            let data := mload(add(strBytes, 32)) // 取出字符串内容（最高 32 字节）
+            result := shr(shift, data) // 向右移动，把内容靠右，前面补 0
+        }
     }
 }

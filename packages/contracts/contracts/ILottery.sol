@@ -38,9 +38,5 @@ abstract contract ILottery {
     function generateSigParam(
         address holder,
         uint256 roundId
-    )
-        external
-        view
-        virtual
-        returns (string memory consumeReasonCode, uint256 nonce);
+    ) public view virtual returns (bytes32 consumeReasonCode, uint256 nonce);
 }

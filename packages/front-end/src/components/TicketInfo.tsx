@@ -1,6 +1,15 @@
 import React, { useState } from "react";
 import { ContractInfo, TicketData, CountdownData } from "../types";
 import { ReactComponent as CopyIcon } from "../assets/copy-icon.svg";
+import { LOTTERY_ADDRESS } from "../config/contracts";
+import { usePointsSignature, useBuy } from "../contracts/lotteryContract";
+import { parseEther } from "viem";
+
+// 添加地址格式化辅助函数
+const formatAddress = (address: string) => {
+  if (!address) return "";
+  return `${address.slice(0, 6)}...${address.slice(-6)}`;
+};
 
 interface TicketInfoProps {
   initialContractInfo?: ContractInfo;
@@ -10,7 +19,7 @@ interface TicketInfoProps {
 
 const TicketInfo: React.FC<TicketInfoProps> = ({
   initialContractInfo = {
-    address: "0x4723...76462d",
+    address: LOTTERY_ADDRESS,
     nextDraw: "24th Sept at 9 AM UTC",
     userTickets: 0,
   },
@@ -29,11 +38,36 @@ const TicketInfo: React.FC<TicketInfoProps> = ({
   const [contractInfo] = useState<ContractInfo>(initialContractInfo);
   const [countdown] = useState<CountdownData>(initialCountdown);
 
+  const { signForBuy, isLoading: isSignLoading } = usePointsSignature();
+  const { buy, isPending: isBuyPending, hash, error: buyError } = useBuy();
+
   const handleQuantityChange = (quantity: number) => {
     setTicketData({
       ...ticketData,
       quantity: quantity,
     });
+  };
+
+  const handleBuyTickets = async () => {
+    try {
+      // 将票数转换为 YUZU 代币数量（假设 1 票 = 1 YUZU）
+      const amount = parseEther(ticketData.quantity.toString());
+
+      // 1. 获取签名
+      const { signature, deadline, roundId } = await signForBuy(amount);
+      
+      // 2. 调用购买方法
+      const txHash = await buy({
+        roundId,
+        amount,
+        signature,
+        deadline,
+      });
+
+      console.log(`购买交易已发送: ${txHash}`);
+    } catch (error) {
+      console.error("购买失败:", error);
+    }
   };
 
   const [labelStyle, valueStyle] = [
@@ -69,7 +103,7 @@ const TicketInfo: React.FC<TicketInfoProps> = ({
             <div className="flex justify-between mb-3">
               <span className={labelStyle}>Contract Address</span>
               <span className={valueStyle}>
-                {contractInfo.address.replace("...", "…")}
+                {formatAddress(contractInfo.address)}
                 <button
                   className="ml-1 text-green-700"
                   onClick={() =>
@@ -157,14 +191,25 @@ const TicketInfo: React.FC<TicketInfoProps> = ({
           </div>
 
           <button
-            className="bg-[#C2F970] hover:bg-[#B5EC63] w-full py-3 rounded-lg text-[#102C24] font-bold mb-2  shadow-[0_3px_0_rgba(0,0,0,1)]  border-2 border-[#102C24]"
-            onClick={() => console.log(`Buying ${ticketData.quantity} tickets`)}
+            className="bg-[#C2F970] hover:bg-[#B5EC63] w-full py-3 rounded-lg text-[#102C24] font-bold mb-2 shadow-[0_3px_0_rgba(0,0,0,1)] border-2 border-[#102C24]"
+            onClick={handleBuyTickets}
+            disabled={isSignLoading || isBuyPending}
           >
-            Buy {ticketData.quantity} Tickets
+            {isSignLoading || isBuyPending ? (
+              "处理中..."
+            ) : (
+              `Buy ${ticketData.quantity} Tickets`
+            )}
           </button>
 
           <div className="text-xs text-center text-white/80">
-            Buying ticket will cost YUZU, and all purchases are final
+            {buyError ? (
+              <span className="text-red-400">{buyError.message}</span>
+            ) : hash ? (
+              <span className="text-green-400">购买成功！</span>
+            ) : (
+              "Buying ticket will cost YUZU, and all purchases are final"
+            )}
           </div>
         </div>
       </div>

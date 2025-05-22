@@ -1,6 +1,6 @@
 import { HardhatUserConfig } from "hardhat/config";
 import "@nomicfoundation/hardhat-toolbox";
-import "solidity-coverage";
+import "@nomicfoundation/hardhat-verify";
 
 import { config as dotEnvConfig } from "dotenv";
 dotEnvConfig();
@@ -11,7 +11,7 @@ const config: HardhatUserConfig = {
 	networks: {
 		eduMainet: {
 			chainId: 41923,
-			url: "https://rpc.edu-chain.raas.gelato.cloud",
+			url: "https://open-campus-codex-sepolia.drpc.org",
 			accounts: [process.env.PRIVATE_KEY!],
 		},
 		eduTestnet: {
@@ -19,11 +19,34 @@ const config: HardhatUserConfig = {
 			url: "https://rpc.open-campus-codex.gelato.digital",
 			accounts: [process.env.PRIVATE_KEY!],
 			gasMultiplier: 100,
-			forking: {
-				enabled: true,
-				url: "https://rpc.edu-chain.raas.gelato.cloud",
-			},
 		},
+	},
+	etherscan: {
+		apiKey: {
+			eduTestnet: "------", // just for placeholder, but must be provided
+			eduMainet: "------", // just for placeholder, but must be provided
+		},
+		customChains: [
+			{
+				network: "eduTestnet",
+				chainId: 656476,
+				urls: {
+					apiURL: "https://edu-chain-testnet.blockscout.com/api",
+					browserURL: "https://edu-chain-testnet.blockscout.com/",
+				},
+			},
+			{
+				network: "eduMainet",
+				chainId: 41923,
+				urls: {
+					apiURL: "https://educhain.blockscout.com/api",
+					browserURL: "https://educhain.blockscout.com/",
+				},
+			},
+		],
+	},
+	sourcify: {
+		enabled: false,
 	},
 };
 

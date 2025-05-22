@@ -5,9 +5,13 @@ import "./LotteryDataLayout.sol";
 import "./ILottery.sol";
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/math/Math.sol";
+import "@openzeppelin/contracts/utils/Strings.sol";
+import {SignatureChecker} from "@openzeppelin/contracts/utils/cryptography/SignatureChecker.sol";
 
 // YuzuPoints interface
 interface IPoints {
+    function nonces(bytes32 hashHolderSpender) external view returns (uint256);
+
     function consume(
         address holder,
         uint256 amount,
@@ -15,9 +19,19 @@ interface IPoints {
         uint256 deadline,
         bytes calldata signature
     ) external;
+
+    function deposit(
+        address holder,
+        uint256 amount,
+        bytes32 depositReasonCode
+    ) external;
+
+    function balances(address user) external view returns (uint256);
 }
 
 contract Lottery is LotteryDataLayout, ILottery, Ownable {
+    using Strings for uint256;
+
     // YuzuPoints contract address
     IPoints public points;
 
@@ -26,23 +40,30 @@ contract Lottery is LotteryDataLayout, ILottery, Ownable {
         points = IPoints(_points);
     }
 
-    function getUserHistory(address walletAddress, uint256 page, uint256 pageSize) external view override returns (UserHistory[] memory) {
+    function getUserHistory(
+        address walletAddress,
+        uint256 page,
+        uint256 pageSize
+    ) external view override returns (UserHistory[] memory) {
         require(page > 0, "Page must be greater than 0");
         require(pageSize > 0, "Page size must be greater than 0");
 
         uint256 startIndex = (page - 1) * pageSize;
-        uint256 endIndex = Math.min(userHistories[walletAddress].length,  startIndex + pageSize);
-        
+        uint256 endIndex = Math.min(
+            userHistories[walletAddress].length,
+            startIndex + pageSize
+        );
+
         uint256 resultCount = endIndex - startIndex;
-        
+
         UserHistory[] memory result = new UserHistory[](resultCount);
-        
+
         for (uint256 i = 0; i < resultCount; i++) {
             uint256 roundId = userHistories[walletAddress][startIndex + i];
 
             Round storage round = rounds[roundId];
 
-            result[i] = UserHistory({       
+            result[i] = UserHistory({
                 roundId: roundId,
                 startTime: round.startTime,
                 endTime: round.endTime,
@@ -55,7 +76,10 @@ contract Lottery is LotteryDataLayout, ILottery, Ownable {
         return result;
     }
 
-    function getUserWinCount(uint256 roundId, address user) public view returns (uint256 winCount) {
+    function getUserWinCount(
+        uint256 roundId,
+        address user
+    ) public view returns (uint256 winCount) {
         Round storage round = rounds[roundId];
 
         for (uint256 i = 0; i < round.winnerUsers.length; i++) {
@@ -99,10 +123,10 @@ contract Lottery is LotteryDataLayout, ILottery, Ownable {
         bytes calldata signature,
         uint256 deadline
     ) external override {
-        require(roundId > 0 && roundId <= rounds.length, "Invalid round ID");
+        require(roundId >= 0 && roundId < rounds.length, "Invalid round ID");
         require(amount > 0, "Amount must be greater than 0");
 
-        Round storage round = rounds[roundId - 1];
+        Round storage round = rounds[roundId];
         require(round.isOpen, "Round is not open");
         require(block.timestamp >= round.startTime, "Round has not started");
         require(block.timestamp <= round.endTime, "Round has ended");
@@ -117,10 +141,12 @@ contract Lottery is LotteryDataLayout, ILottery, Ownable {
         require(deadline > block.timestamp, "Deadline must be in the future");
 
         // call Points contract consume function, use signature for authorization
+        (bytes32 consumeReasonCode, ) = generateSigParam(msg.sender, roundId);
+
         points.consume(
             msg.sender,
             amount,
-            LOTTERY_TICKET_PURCHASE,
+            consumeReasonCode,
             deadline,
             signature
         );
@@ -129,7 +155,7 @@ contract Lottery is LotteryDataLayout, ILottery, Ownable {
         if (round.usersMap[msg.sender] == 0) {
             round.users.push(msg.sender);
             round.accumulatedParticipants++;
-            
+
             // mark user history
             userHistories[msg.sender].push(roundId);
         }
@@ -192,4 +218,39 @@ contract Lottery is LotteryDataLayout, ILottery, Ownable {
         emit WinnersSelected(roundId, winners);
     }
 
+    function getLastRoundId() external view override returns (uint256 result) {
+        result = rounds.length - 1;
+    }
+
+    function generateSigParam(
+        address holder,
+        uint256 roundId
+    ) public view override returns (bytes32 consumeReasonCode, uint256 nonce) {
+        address spender = address(this);
+        bytes32 nonceKey = keccak256(abi.encodePacked(holder, spender));
+
+        nonce = points.nonces(nonceKey);
+
+        // roundId is 0-based, but the consume reason code is 1-based
+        string memory reasonStr = string(
+            abi.encodePacked(PREFIX_REASON_CODE, (roundId + 1).toString())
+        );
+
+        consumeReasonCode = leftPadToBytes32(reasonStr);
+    }
+
+    function leftPadToBytes32(
+        string memory source
+    ) internal pure returns (bytes32 result) {
+        bytes memory strBytes = bytes(source);
+        require(strBytes.length <= 32, "String too long");
+
+        uint256 len = strBytes.length;
+        uint256 shift = (32 - len) * 8; // 位移多少位
+
+        assembly {
+            let data := mload(add(strBytes, 32)) // 取出字符串内容（最高 32 字节）
+            result := shr(shift, data) // 向右移动，把内容靠右，前面补 0
+        }
+    }
 }

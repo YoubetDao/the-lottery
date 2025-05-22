@@ -9,25 +9,32 @@ async function main() {
 		throw new Error("Invalid network");
 	}
 
-    const contractAddress = CustomConfig[networkName].lotteryContract;
+	const contractAddress = CustomConfig[networkName].lotteryContract;
 	console.log("Lottery contract address:", contractAddress);
 
-    const ContractFactory = await ethers.getContractFactory("Lottery");
-    const lottery = await ContractFactory.attach(contractAddress) as Lottery;
+	const ContractFactory = await ethers.getContractFactory("Lottery");
+	const lottery = (await ContractFactory.attach(contractAddress)) as Lottery;
 
-	console.log(`Will create round with the account: ${deployer.address}, isOwner: ${deployer.address === await lottery.owner()}`);
+	console.log(
+		`Will create round with the account: ${deployer.address}, isOwner: ${
+			deployer.address === (await lottery.owner())
+		}`
+	);
 
+	// Get current timestamp in seconds
+	const currentTimestamp = Math.floor(Date.now() / 1000);
+	const startTime = currentTimestamp - 7 * 24 * 60 * 60;
+	const endTime = currentTimestamp + 7 * 24 * 60 * 60;
+	const tx = await lottery.createRound(
+		startTime,
+		endTime,
+		ethers.parseEther("1"),
+		5
+	);
+	await tx.wait();
 
-    const tx = await lottery.createRound(
-        1745333453,
-        1745938253, 
-        ethers.parseEther("1"),
-        5
-    );
-    await tx.wait();
-
-    console.log("New round created successfully");
-    console.log("Transaction hash:", tx.hash);
+	console.log("New round created successfully");
+	console.log("Transaction hash:", tx.hash);
 }
 
 main()

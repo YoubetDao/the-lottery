@@ -99,7 +99,10 @@ abstract contract LotteryDataLayout {
     // @dev The mapping of user addresses to their history
     mapping(address => uint256[]) public userHistories;
 
-    // Consume reason code for lottery ticket purchase
-    bytes32 public constant LOTTERY_TICKET_PURCHASE =
-        keccak256("LOTTERY_TICKET_PURCHASE");
+    bytes32 public constant CONSUME_TYPEHASH =
+        keccak256(
+            "Consume(address holder,address spender,uint256 amount,bytes32 reasonCode,uint256 deadline,uint256 nonce)"
+        );
+
+    string public constant PREFIX_REASON_CODE = "yuzu-lottery-";
 }

@@ -1,13 +1,14 @@
 import { useReadContract, useWriteContract, useSignTypedData, useAccount, useChainId } from 'wagmi'
 import { ILotteryABI as lotteryAbi } from '../abi/ILottery'
 import { LOTTERY_ADDRESS, POINTS_ADDRESS } from '../config/contracts'
+import { use, useEffect } from 'react'
 
 export function useLastRoundId() {
   const {
     data: lastRoundId,
     error,
     isPending
-  } = useReadContract({
+  } = (useReadContract as any)({
     address: LOTTERY_ADDRESS,
     abi: lotteryAbi,
     functionName: 'getLastRoundId',
@@ -21,26 +22,23 @@ export function useLastRoundId() {
 }
 
 export function useGenerateSigParam(holder: `0x${string}`, roundId: number | bigint) {
-  // 如果参数无效，返回空结果
-  if (!holder || holder === '0x0000000000000000000000000000000000000000' || !roundId) {
-    return {
-      consumeReasonCode: undefined,
-      nonce: undefined,
-      isPending: false,
-      error: undefined
-    }
-  }
 
   const {
     data,
     isPending,
     error,
-  } = useReadContract({
+  } = (useReadContract as any)({
     address: LOTTERY_ADDRESS as `0x${string}`,
     abi: lotteryAbi,
     functionName: 'generateSigParam',
     args: [holder, BigInt(roundId)],
   })
+
+  useEffect(() => {
+  console.log('data', data)
+    console.log('isPending', isPending)
+    console.log('error', error)
+  }, [data, isPending, error])
 
   return {
     consumeReasonCode: data ? data[0] : undefined,
@@ -78,7 +76,7 @@ export function useBuy() {
       throw new Error('Missing required parameters')
     }
 
-    return await writeContractAsync({
+    return await (writeContractAsync as any)({
       address: LOTTERY_ADDRESS as `0x${string}`,
       abi: lotteryAbi,
       functionName: 'buy',
@@ -106,6 +104,7 @@ export function usePointsSignature() {
 
   // 获取最新轮次ID
   const { lastRoundId, isPending: isRoundIdLoading, error: roundIdError } = useLastRoundId()
+  console.log('lastRoundId', lastRoundId)
 
   // 获取签名参数
   const {
@@ -117,6 +116,9 @@ export function usePointsSignature() {
     address as `0x${string}`,
     lastRoundId
   )
+
+  console.log('consumeReasonCode', consumeReasonCode)
+  console.log('nonce', nonce)
 
   /**
    * 生成购买彩票所需的签名
@@ -133,7 +135,7 @@ export function usePointsSignature() {
     const domain = {
       name: 'Points',
       version: '1.0',
-      chainId,
+      chainId: 656476,
       verifyingContract: POINTS_ADDRESS as `0x${string}`,
     }
 
@@ -150,14 +152,14 @@ export function usePointsSignature() {
 
     const message = {
       holder: address as `0x${string}`,
-      spender: address as `0x${string}`,
+      spender: LOTTERY_ADDRESS as `0x${string}`,
       amount,
       reasonCode: consumeReasonCode,
       deadline,
       nonce: BigInt(nonce),
     }
 
-    const signature = await signTypedDataAsync({
+    const signature = await (signTypedDataAsync as any)({
       domain,
       types,
       primaryType: 'Consume',

@@ -3,7 +3,6 @@ import { ContractInfo, TicketData, CountdownData } from "../types";
 import { ReactComponent as CopyIcon } from "../assets/copy-icon.svg";
 import { LOTTERY_ADDRESS } from "../config/contracts";
 import { usePointsSignature, useBuy } from "../contracts/lotteryContract";
-import { parseEther } from "viem";
 
 // 添加地址格式化辅助函数
 const formatAddress = (address: string) => {
@@ -50,12 +49,16 @@ const TicketInfo: React.FC<TicketInfoProps> = ({
 
   const handleBuyTickets = async () => {
     try {
-      // 将票数转换为 YUZU 代币数量（假设 1 票 = 1 YUZU）
-      const amount = parseEther(ticketData.quantity.toString());
-
+      // 1. 获取签名
+      const amount = BigInt(ticketData.quantity);
       // 1. 获取签名
       const { signature, deadline, roundId } = await signForBuy(amount);
-      
+
+      console.log('roundid', roundId)
+      console.log('signature', signature)
+      console.log('deadline', deadline)
+      console.log('amount', amount)
+
       // 2. 调用购买方法
       const txHash = await buy({
         roundId,
@@ -63,6 +66,7 @@ const TicketInfo: React.FC<TicketInfoProps> = ({
         signature,
         deadline,
       });
+
 
       console.log(`购买交易已发送: ${txHash}`);
     } catch (error) {
@@ -193,13 +197,8 @@ const TicketInfo: React.FC<TicketInfoProps> = ({
           <button
             className="bg-[#C2F970] hover:bg-[#B5EC63] w-full py-3 rounded-lg text-[#102C24] font-bold mb-2 shadow-[0_3px_0_rgba(0,0,0,1)] border-2 border-[#102C24]"
             onClick={handleBuyTickets}
-            disabled={isSignLoading || isBuyPending}
           >
-            {isSignLoading || isBuyPending ? (
-              "处理中..."
-            ) : (
-              `Buy ${ticketData.quantity} Tickets`
-            )}
+            {`Buy ${ticketData.quantity} Tickets`}
           </button>
 
           <div className="text-xs text-center text-white/80">

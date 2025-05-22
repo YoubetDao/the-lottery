@@ -4,12 +4,12 @@ import Hero from "./components/Hero";
 import TicketInfo from "./components/TicketInfo";
 import DrawHistory from "./components/DrawHistory";
 import HowToPlay from "./components/HowToPlay";
-import Footer from "./components/Footer";
 import { WagmiProvider } from "wagmi";
 import { getDefaultConfig, RainbowKitProvider } from "@rainbow-me/rainbowkit";
 import { eduChain, eduTestnet, projectId } from "./config";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import "@rainbow-me/rainbowkit/styles.css";
+
 
 export const config = getDefaultConfig({
   appName: "Yuzu Lottery",

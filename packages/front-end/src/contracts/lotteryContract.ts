@@ -12,3 +12,8 @@ export const LOTTERY_CONTRACT_ADDRESS =
  * @param deadline deadline
  */
 export function useBuyLotteryTickets() {}
+
+export const wagmiContractConfig = {
+  address: LOTTERY_CONTRACT_ADDRESS,
+  abi: ILotteryABI,
+} as const;

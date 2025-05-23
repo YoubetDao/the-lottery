@@ -9,8 +9,7 @@ abstract contract ILottery {
     function createRound(
         uint256 startTime,
         uint256 endTime,
-        uint256 rewardAmount,
-        uint256 winnerCount
+        uint256[] memory prizeTiers
     ) external virtual;
 
     // @dev User buys lottery tickets
@@ -24,12 +23,27 @@ abstract contract ILottery {
     // @dev Draw the winning numbers
     function draw(uint256 roundId) external virtual;
 
+    // @dev Get the round info
+    function getRound(
+        uint256 roundId
+    ) external view virtual returns (LotteryDataLayout.RoundHistory memory);
+
     // @dev Get the lottery history for a specific address
     function getUserHistory(
         address walletAddress,
         uint256 page,
         uint256 pageSize
-    ) external view virtual returns (LotteryDataLayout.UserHistory[] memory);
+    )
+        external
+        view
+        virtual
+        returns (LotteryDataLayout.UserHistory[] memory, bool hasMore);
+
+    // @dev Get the lottery history for a specific address and round
+    function getUserRoundHistory(
+        address walletAddress,
+        uint256 roundId
+    ) external view virtual returns (LotteryDataLayout.UserHistory memory);
 
     // @dev Get the last round of the lottery
     function getLastRoundId() external view virtual returns (uint256);

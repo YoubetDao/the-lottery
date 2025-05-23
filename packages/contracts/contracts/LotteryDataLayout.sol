@@ -15,6 +15,8 @@ abstract contract LotteryDataLayout {
         uint256 rewardAmount;
         // Number of winners
         uint256 winnerCount;
+        // Prize tiers
+        uint256[] prizeTiers;
         // Participating users, each user has one slot, used for the draw
         address[] users;
         // Amount of yuzu spent by each user
@@ -23,6 +25,32 @@ abstract contract LotteryDataLayout {
         mapping(address => uint256) ticketsCount;
         // Mapping of ticket IDs to user addresses
         mapping(uint256 => address) ticketOwners;
+        // Total number of tickets issued for this round
+        uint256 totalTickets;
+        // Total amount of yuzu spent by users
+        uint256 accumulatedAmount;
+        // Total number of participants
+        uint256 accumulatedParticipants;
+        // Winning numbers
+        uint256[] winNumbers;
+        // Winning users
+        address[] winnerUsers;
+    }
+
+    // @dev Represents a single round of the lottery, used for query
+    struct RoundHistory {
+        // Whether the draw is open
+        bool isOpen;
+        // Start time
+        uint256 startTime;
+        // End time
+        uint256 endTime;
+        // Reward amount
+        uint256 rewardAmount;
+        // Number of winners
+        uint256 winnerCount;
+        // Prize tiers
+        uint256[] prizeTiers;
         // Total number of tickets issued for this round
         uint256 totalTickets;
         // Total amount of yuzu spent by users
@@ -47,7 +75,7 @@ abstract contract LotteryDataLayout {
         uint256 totalAmountSpent;
         // The number of tickets owned
         uint256 totalTicketCount;
-        // win ticket count
+        // win ticket count, may be zero if not drawn or not winner
         uint256 winningTicketCount;
     }
 
@@ -62,7 +90,9 @@ abstract contract LotteryDataLayout {
         // @dev The reward amount of the round
         uint256 rewardAmount,
         // @dev The number of winners of the round
-        uint256 winerCount
+        uint256 winerCount,
+        // @dev The prize tiers of the round
+        uint256[] prizeTiers
     );
 
     // @dev Emitted when a user buys lottery tickets

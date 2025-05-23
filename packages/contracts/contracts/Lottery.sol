@@ -44,7 +44,12 @@ contract Lottery is LotteryDataLayout, ILottery, Ownable {
         address walletAddress,
         uint256 page,
         uint256 pageSize
-    ) external view override returns (UserHistory[] memory) {
+    )
+        external
+        view
+        override
+        returns (UserHistory[] memory historyList, bool hasMore)
+    {
         require(page > 0, "Page must be greater than 0");
         require(pageSize > 0, "Page size must be greater than 0");
 
@@ -73,7 +78,53 @@ contract Lottery is LotteryDataLayout, ILottery, Ownable {
             });
         }
 
-        return result;
+        historyList = result;
+        hasMore = userHistories[walletAddress].length > endIndex;
+    }
+
+    function getUserRoundHistory(
+        address walletAddress,
+        uint256 roundId
+    ) external view override returns (UserHistory memory result) {
+        require(roundId < rounds.length, "Invalid round ID");
+
+        Round storage round = rounds[roundId];
+
+        result = UserHistory({
+            roundId: roundId,
+            startTime: round.startTime,
+            endTime: round.endTime,
+            totalAmountSpent: round.usersMap[walletAddress],
+            totalTicketCount: round.ticketsCount[walletAddress],
+            winningTicketCount: getUserWinCount(roundId, walletAddress)
+        });
+    }
+
+    function getRound(
+        uint256 roundId
+    )
+        external
+        view
+        override
+        returns (LotteryDataLayout.RoundHistory memory result)
+    {
+        require(roundId < rounds.length, "Invalid round ID");
+
+        Round storage round = rounds[roundId];
+
+        result = RoundHistory({
+            isOpen: round.isOpen,
+            startTime: round.startTime,
+            endTime: round.endTime,
+            rewardAmount: round.rewardAmount,
+            winnerCount: round.winnerCount,
+            prizeTiers: round.prizeTiers,
+            totalTickets: round.totalTickets,
+            accumulatedAmount: round.accumulatedAmount,
+            accumulatedParticipants: round.accumulatedParticipants,
+            winNumbers: round.winNumbers,
+            winnerUsers: round.winnerUsers
+        });
     }
 
     function getUserWinCount(
@@ -93,12 +144,19 @@ contract Lottery is LotteryDataLayout, ILottery, Ownable {
     function createRound(
         uint256 startTime,
         uint256 endTime,
-        uint256 rewardAmount,
-        uint256 winnerCount
+        uint256[] memory prizeTiers
     ) external override onlyOwner {
         require(startTime < endTime, "Start time must be before end time");
-        require(rewardAmount > 0, "Reward amount must be greater than 0");
+
+        uint256 winnerCount = prizeTiers.length;
         require(winnerCount > 0, "Winer count must be greater than 0");
+
+        uint256 rewardAmount = 0;
+        for (uint256 i = 0; i < prizeTiers.length; i++) {
+            rewardAmount += prizeTiers[i];
+        }
+
+        require(rewardAmount > 0, "Reward amount must be greater than 0");
 
         Round storage round = rounds.push();
 
@@ -106,6 +164,7 @@ contract Lottery is LotteryDataLayout, ILottery, Ownable {
         round.endTime = endTime;
         round.rewardAmount = rewardAmount;
         round.winnerCount = winnerCount;
+        round.prizeTiers = prizeTiers;
         round.isOpen = true;
 
         emit RoundCreated(
@@ -113,7 +172,8 @@ contract Lottery is LotteryDataLayout, ILottery, Ownable {
             startTime,
             endTime,
             rewardAmount,
-            winnerCount
+            winnerCount,
+            prizeTiers
         );
     }
 

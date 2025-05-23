@@ -139,6 +139,12 @@ export const ILotteryABI = [
 				name: "winerCount",
 				type: "uint256",
 			},
+			{
+				indexed: false,
+				internalType: "uint256[]",
+				name: "prizeTiers",
+				type: "uint256[]",
+			},
 		],
 		name: "RoundCreated",
 		type: "event",
@@ -229,14 +235,9 @@ export const ILotteryABI = [
 				type: "uint256",
 			},
 			{
-				internalType: "uint256",
-				name: "rewardAmount",
-				type: "uint256",
-			},
-			{
-				internalType: "uint256",
-				name: "winnerCount",
-				type: "uint256",
+				internalType: "uint256[]",
+				name: "prizeTiers",
+				type: "uint256[]",
 			},
 		],
 		name: "createRound",
@@ -302,6 +303,82 @@ export const ILotteryABI = [
 	{
 		inputs: [
 			{
+				internalType: "uint256",
+				name: "roundId",
+				type: "uint256",
+			},
+		],
+		name: "getRound",
+		outputs: [
+			{
+				components: [
+					{
+						internalType: "bool",
+						name: "isOpen",
+						type: "bool",
+					},
+					{
+						internalType: "uint256",
+						name: "startTime",
+						type: "uint256",
+					},
+					{
+						internalType: "uint256",
+						name: "endTime",
+						type: "uint256",
+					},
+					{
+						internalType: "uint256",
+						name: "rewardAmount",
+						type: "uint256",
+					},
+					{
+						internalType: "uint256",
+						name: "winnerCount",
+						type: "uint256",
+					},
+					{
+						internalType: "uint256[]",
+						name: "prizeTiers",
+						type: "uint256[]",
+					},
+					{
+						internalType: "uint256",
+						name: "totalTickets",
+						type: "uint256",
+					},
+					{
+						internalType: "uint256",
+						name: "accumulatedAmount",
+						type: "uint256",
+					},
+					{
+						internalType: "uint256",
+						name: "accumulatedParticipants",
+						type: "uint256",
+					},
+					{
+						internalType: "uint256[]",
+						name: "winNumbers",
+						type: "uint256[]",
+					},
+					{
+						internalType: "address[]",
+						name: "winnerUsers",
+						type: "address[]",
+					},
+				],
+				internalType: "struct LotteryDataLayout.RoundHistory",
+				name: "result",
+				type: "tuple",
+			},
+		],
+		stateMutability: "view",
+		type: "function",
+	},
+	{
+		inputs: [
+			{
 				internalType: "address",
 				name: "walletAddress",
 				type: "address",
@@ -353,8 +430,69 @@ export const ILotteryABI = [
 					},
 				],
 				internalType: "struct LotteryDataLayout.UserHistory[]",
-				name: "",
+				name: "historyList",
 				type: "tuple[]",
+			},
+			{
+				internalType: "bool",
+				name: "hasMore",
+				type: "bool",
+			},
+		],
+		stateMutability: "view",
+		type: "function",
+	},
+	{
+		inputs: [
+			{
+				internalType: "address",
+				name: "walletAddress",
+				type: "address",
+			},
+			{
+				internalType: "uint256",
+				name: "roundId",
+				type: "uint256",
+			},
+		],
+		name: "getUserRoundHistory",
+		outputs: [
+			{
+				components: [
+					{
+						internalType: "uint256",
+						name: "roundId",
+						type: "uint256",
+					},
+					{
+						internalType: "uint256",
+						name: "startTime",
+						type: "uint256",
+					},
+					{
+						internalType: "uint256",
+						name: "endTime",
+						type: "uint256",
+					},
+					{
+						internalType: "uint256",
+						name: "totalAmountSpent",
+						type: "uint256",
+					},
+					{
+						internalType: "uint256",
+						name: "totalTicketCount",
+						type: "uint256",
+					},
+					{
+						internalType: "uint256",
+						name: "winningTicketCount",
+						type: "uint256",
+					},
+				],
+				internalType: "struct LotteryDataLayout.UserHistory",
+				name: "result",
+				type: "tuple",
 			},
 		],
 		stateMutability: "view",

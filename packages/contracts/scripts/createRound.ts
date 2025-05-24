@@ -25,12 +25,14 @@ async function main() {
 	const currentTimestamp = Math.floor(Date.now() / 1000);
 	const startTime = currentTimestamp - 7 * 24 * 60 * 60;
 	const endTime = currentTimestamp + 7 * 24 * 60 * 60;
-	const tx = await lottery.createRound(
-		startTime,
-		endTime,
+
+	const prizeTiers = [
 		ethers.parseEther("1"),
-		5
-	);
+		ethers.parseEther("2"),
+		ethers.parseEther("3"),
+	];
+
+	const tx = await lottery.createRound(startTime, endTime, prizeTiers);
 	await tx.wait();
 
 	console.log("New round created successfully");

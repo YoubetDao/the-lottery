@@ -31,10 +31,10 @@ abstract contract LotteryDataLayout {
         uint256 accumulatedAmount;
         // Total number of participants
         uint256 accumulatedParticipants;
-        // Winning numbers
-        uint256[] winNumbers;
         // Winning users
         address[] winnerUsers;
+        // Winning numbers, may be zero if not drawn
+        uint256 winNumber;
     }
 
     // @dev Represents a single round of the lottery, used for query
@@ -57,10 +57,10 @@ abstract contract LotteryDataLayout {
         uint256 accumulatedAmount;
         // Total number of participants
         uint256 accumulatedParticipants;
-        // Winning numbers
-        uint256[] winNumbers;
         // Winning users
         address[] winnerUsers;
+        // Winning numbers, may be zero if not drawn
+        uint256 winNumber;
     }
 
     // @dev Represents the history of a user's participation in a round
@@ -77,6 +77,8 @@ abstract contract LotteryDataLayout {
         uint256 totalTicketCount;
         // win ticket count, may be zero if not drawn or not winner
         uint256 winningTicketCount;
+        // Amount of prizes won in this round
+        uint256 prizeWon;
     }
 
     // @dev Emitted when a new round is created
@@ -110,7 +112,7 @@ abstract contract LotteryDataLayout {
         // @dev The id of the round
         uint256 indexed roundId,
         // @dev The winning numbers
-        uint256[] winNumbers,
+        uint256 winNumber,
         // @dev The addresses of the winners
         address[] winUsers
     );
@@ -119,6 +121,8 @@ abstract contract LotteryDataLayout {
     event WinnersSelected(
         // @dev The id of the round
         uint256 indexed roundId,
+        // @dev The winning number
+        uint256 winNumber,
         // @dev The addresses of the winners
         address[] winnerUsers
     );

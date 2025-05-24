@@ -68,13 +68,16 @@ contract Lottery is LotteryDataLayout, ILottery, Ownable {
 
             Round storage round = rounds[roundId];
 
+            uint256 prizeWon = getPrizeWon(roundId, walletAddress);
+
             result[i] = UserHistory({
                 roundId: roundId,
                 startTime: round.startTime,
                 endTime: round.endTime,
                 totalAmountSpent: round.usersMap[walletAddress],
                 totalTicketCount: round.ticketsCount[walletAddress],
-                winningTicketCount: getUserWinCount(roundId, walletAddress)
+                winningTicketCount: getUserWinCount(roundId, walletAddress),
+                prizeWon: prizeWon
             });
         }
 
@@ -90,13 +93,16 @@ contract Lottery is LotteryDataLayout, ILottery, Ownable {
 
         Round storage round = rounds[roundId];
 
+        uint256 prizeWon = getPrizeWon(roundId, walletAddress);
+
         result = UserHistory({
             roundId: roundId,
             startTime: round.startTime,
             endTime: round.endTime,
             totalAmountSpent: round.usersMap[walletAddress],
             totalTicketCount: round.ticketsCount[walletAddress],
-            winningTicketCount: getUserWinCount(roundId, walletAddress)
+            winningTicketCount: getUserWinCount(roundId, walletAddress),
+            prizeWon: prizeWon
         });
     }
 
@@ -122,7 +128,7 @@ contract Lottery is LotteryDataLayout, ILottery, Ownable {
             totalTickets: round.totalTickets,
             accumulatedAmount: round.accumulatedAmount,
             accumulatedParticipants: round.accumulatedParticipants,
-            winNumbers: round.winNumbers,
+            winNumber: round.winNumber,
             winnerUsers: round.winnerUsers
         });
     }
@@ -256,15 +262,26 @@ contract Lottery is LotteryDataLayout, ILottery, Ownable {
         uint256 participantCount = round.users.length;
         require(participantCount > 0, "No participants");
 
+        // generate a random number
+        round.winNumber =
+            uint256(
+                keccak256(
+                    abi.encodePacked(
+                        block.prevrandao,
+                        block.timestamp,
+                        participantCount
+                    )
+                )
+            ) %
+            participantCount;
+
         // 选择多个获奖者
         address[] memory winners = new address[](round.winnerCount);
         for (uint256 i = 0; i < round.winnerCount; i++) {
             uint256 randomIndex = uint256(
                 keccak256(
                     abi.encodePacked(
-                        block.prevrandao,
-                        block.timestamp,
-                        participantCount,
+                        round.winNumber,
                         round.users[participantCount - 1],
                         i // 添加循环索引增加随机性
                     )
@@ -275,7 +292,7 @@ contract Lottery is LotteryDataLayout, ILottery, Ownable {
 
         round.winnerUsers = winners;
         round.isOpen = false;
-        emit WinnersSelected(roundId, winners);
+        emit WinnersSelected(roundId, round.winNumber, winners);
     }
 
     function getLastRoundId() external view override returns (uint256 result) {
@@ -311,6 +328,19 @@ contract Lottery is LotteryDataLayout, ILottery, Ownable {
         assembly {
             let data := mload(add(strBytes, 32)) // 取出字符串内容（最高 32 字节）
             result := shr(shift, data) // 向右移动，把内容靠右，前面补 0
+        }
+    }
+
+    function getPrizeWon(
+        uint256 roundId,
+        address user
+    ) public view returns (uint256 prizeWon) {
+        Round storage round = rounds[roundId];
+
+        for (uint256 i = 0; i < round.winnerUsers.length; i++) {
+            if (round.winnerUsers[i] == user) {
+                prizeWon += round.prizeTiers[i];
+            }
         }
     }
 }

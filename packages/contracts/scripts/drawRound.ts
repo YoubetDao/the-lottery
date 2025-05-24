@@ -21,21 +21,13 @@ async function main() {
 		}`
 	);
 
-	// Get current timestamp in seconds
-	const currentTimestamp = Math.floor(Date.now() / 1000);
-	const startTime = currentTimestamp - 7 * 24 * 60 * 60;
-	const endTime = currentTimestamp + 1 * 24 * 60 * 60;
+	const roundId = await lottery.getLastRoundId();
+	console.log("Round ID:", roundId);
 
-	const prizeTiers = [
-		ethers.parseEther("1"),
-		ethers.parseEther("2"),
-		ethers.parseEther("3"),
-	];
-
-	const tx = await lottery.createRound(startTime, endTime, prizeTiers);
+	const tx = await lottery.draw(roundId);
 	await tx.wait();
 
-	console.log("New round created successfully");
+	console.log("Draw round successfully");
 	console.log("Transaction hash:", tx.hash);
 }
 

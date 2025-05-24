@@ -6,7 +6,12 @@ import { config as dotEnvConfig } from "dotenv";
 dotEnvConfig();
 
 const config: HardhatUserConfig = {
-	solidity: "0.8.28",
+	solidity: {
+		version: "0.8.28",
+		settings: {
+			viaIR: true,
+		},
+	},
 
 	networks: {
 		eduMainet: {

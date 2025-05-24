@@ -48,9 +48,9 @@ export const ILotteryABI = [
 			},
 			{
 				indexed: false,
-				internalType: "uint256[]",
-				name: "winNumbers",
-				type: "uint256[]",
+				internalType: "uint256",
+				name: "winNumber",
+				type: "uint256",
 			},
 			{
 				indexed: false,
@@ -156,6 +156,12 @@ export const ILotteryABI = [
 				indexed: true,
 				internalType: "uint256",
 				name: "roundId",
+				type: "uint256",
+			},
+			{
+				indexed: false,
+				internalType: "uint256",
+				name: "winNumber",
 				type: "uint256",
 			},
 			{
@@ -307,6 +313,30 @@ export const ILotteryABI = [
 				name: "roundId",
 				type: "uint256",
 			},
+			{
+				internalType: "address",
+				name: "user",
+				type: "address",
+			},
+		],
+		name: "getPrizeWon",
+		outputs: [
+			{
+				internalType: "uint256",
+				name: "prizeWon",
+				type: "uint256",
+			},
+		],
+		stateMutability: "view",
+		type: "function",
+	},
+	{
+		inputs: [
+			{
+				internalType: "uint256",
+				name: "roundId",
+				type: "uint256",
+			},
 		],
 		name: "getRound",
 		outputs: [
@@ -358,14 +388,14 @@ export const ILotteryABI = [
 						type: "uint256",
 					},
 					{
-						internalType: "uint256[]",
-						name: "winNumbers",
-						type: "uint256[]",
-					},
-					{
 						internalType: "address[]",
 						name: "winnerUsers",
 						type: "address[]",
+					},
+					{
+						internalType: "uint256",
+						name: "winNumber",
+						type: "uint256",
 					},
 				],
 				internalType: "struct LotteryDataLayout.RoundHistory",
@@ -428,6 +458,11 @@ export const ILotteryABI = [
 						name: "winningTicketCount",
 						type: "uint256",
 					},
+					{
+						internalType: "uint256",
+						name: "prizeWon",
+						type: "uint256",
+					},
 				],
 				internalType: "struct LotteryDataLayout.UserHistory[]",
 				name: "historyList",
@@ -487,6 +522,11 @@ export const ILotteryABI = [
 					{
 						internalType: "uint256",
 						name: "winningTicketCount",
+						type: "uint256",
+					},
+					{
+						internalType: "uint256",
+						name: "prizeWon",
 						type: "uint256",
 					},
 				],
@@ -603,6 +643,11 @@ export const ILotteryABI = [
 			{
 				internalType: "uint256",
 				name: "accumulatedParticipants",
+				type: "uint256",
+			},
+			{
+				internalType: "uint256",
+				name: "winNumber",
 				type: "uint256",
 			},
 		],

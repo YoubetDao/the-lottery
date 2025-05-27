@@ -210,6 +210,7 @@ const TicketInfo: React.FC<TicketInfoProps> = ({
 
       {/* Right Panel - Ticket Purchase */}
       <div className="relative top-[-120px]">
+        <section id="buy_ticket">
         <div className="bg-[#FFA706] rounded-t-[16px] px-8 py-6 border-[2px] w-[490px] border-[#102C24]">
           <div className="flex justify-between items-center mb-2">
             <div className="text-[#102C24] text-[14px] font-medium ">Buy</div>
@@ -265,6 +266,7 @@ const TicketInfo: React.FC<TicketInfoProps> = ({
             </button>
           </div>
         </div>
+        </section>
 
         <div className="bg-[#157433] rounded-b-[16px] px-8 py-6 border-x-[2px] border-t-[1px] border-[#102C24] shadow-[0_4px_0_rgba(0,0,0,1)]">
           <div className="flex justify-between mb-4 text-white">

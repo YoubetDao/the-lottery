@@ -295,8 +295,26 @@ contract Lottery is LotteryDataLayout, ILottery, Ownable {
         emit WinnersSelected(roundId, round.winNumber, winners);
     }
 
-    function getLastRoundId() external view override returns (uint256 result) {
-        result = rounds.length - 1;
+    function getLastRoundId() external view override returns (int256 result) {
+        if (rounds.length == 0) {
+            return -1;
+        }
+
+        return int256(rounds.length - 1);
+    }
+
+    function getLastDrawnRoundId() external view override returns (int256) {
+        if (rounds.length == 0) {
+            return -1;
+        }
+
+        for (uint256 i = rounds.length; i > 0; i--) {
+            if (!rounds[i - 1].isOpen) {
+                return int256(i - 1);
+            }
+        }
+
+        return -1;
     }
 
     function generateSigParam(

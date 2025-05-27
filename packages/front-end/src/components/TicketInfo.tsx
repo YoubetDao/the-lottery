@@ -74,7 +74,7 @@ const TicketInfo: React.FC<TicketInfoProps> = ({
   const [ticketData, setTicketData] = useState<TicketData>(initialTicketData);
   const [contractInfo, setContractInfo] = useState<ContractInfo>(initialContractInfo);
   const [countdown, setCountdown] = useState<CountdownData>(initialCountdown);
-
+  const [copied, setCopied] = useState(false);
   const { signForBuy, isLoading: isSignLoading } = usePointsSignature();
   const { buy, isPending: isBuyPending, hash, error: buyError } = useBuy();
   const { isOpen, startTime, endTime, isPending: isRoundInfoPending, error: roundInfoError } = useRoundInfo();
@@ -89,11 +89,7 @@ const TicketInfo: React.FC<TicketInfoProps> = ({
         ...prev,
         nextDraw: formatTimestampToUtcString(endTime),
       }));
-    }
-  }, [endTime]);
 
-  useEffect(() => {
-    if (endTime) {
       setCountdown(getCountdownData(endTime));
     }
   }, [endTime]);
@@ -132,6 +128,20 @@ const TicketInfo: React.FC<TicketInfoProps> = ({
     }
   };
 
+  // Handle copy button click
+  const handleCopy = () => {
+    navigator.clipboard.writeText(contractInfo.address);
+    setCopied(true);
+  };
+
+  // Automatically hide the copied message after 1.5 seconds
+  useEffect(() => {
+    if (copied) {
+      const timer = setTimeout(() => setCopied(false), 1500);
+      return () => clearTimeout(timer);
+    }
+  }, [copied]);
+
   const [labelStyle, valueStyle] = [
     "text-base leading-[1.6rem] font-poppins text-[#102C24]",
     "flex items-center text-base font-poppins font-semibold leading-[1.6rem] text-[#157433]",
@@ -168,12 +178,13 @@ const TicketInfo: React.FC<TicketInfoProps> = ({
                 {formatAddress(contractInfo.address)}
                 <button
                   className="ml-1 text-green-700"
-                  onClick={() =>
-                    navigator.clipboard.writeText(contractInfo.address)
-                  }
+                  onClick={handleCopy}
                 >
                   <CopyIcon />
                 </button>
+                {copied && (
+                  <span className="ml-2 text-xs text-green-600">Copied!</span>
+                )}
               </span>
             </div>
             <div className="flex justify-between mb-3">

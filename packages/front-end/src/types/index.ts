@@ -31,11 +31,12 @@ export interface StepInfo {
   description: string;
 }
 
-export interface UserHistoryItem {
+export type UserHistoryItem = {
   roundId: bigint;
   startTime: bigint;
   endTime: bigint;
   totalAmountSpent: bigint;
   totalTicketCount: bigint;
   winningTicketCount: bigint;
-}
+  prizeWon: bigint;
+};

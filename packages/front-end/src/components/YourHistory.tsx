@@ -4,17 +4,6 @@ import { useState } from "react";
 import { ReactComponent as ChevronLeft } from "../assets/chevron-left.svg";
 import { ReactComponent as ChevronRight } from "../assets/chevron-right.svg";
 import { UserHistoryItem } from "../types";
-// const mockData = [
-//   { round: 22, date: "22th Sept 9AM", total: 15, winning: 0, prize: "$0" },
-//   { round: 19, date: "22th Sept 9AM", total: 15, winning: 1, prize: "$43.22" },
-//   {
-//     round: 3,
-//     date: "19th Sept 9AM",
-//     total: 100,
-//     winning: 60,
-//     prize: "$4392.22",
-//   },
-// ];
 
 export const YourHistory = () => {
   const { isConnected, address } = useAccount();
@@ -29,8 +18,12 @@ export const YourHistory = () => {
     query: {
       enabled: !!address,
     },
-  }) as { data: UserHistoryItem[] | undefined };
-  const hasNextPage = data?.length === Number(pageSize);
+  });
+  const historyListRaw = Array.isArray(data?.[0])
+    ? (data[0] as UserHistoryItem[])
+    : [];
+  const hasMore = typeof data?.[1] === "boolean" ? (data[1] as boolean) : false;
+  const hasNextPage = hasMore || false;
   const handlePreviousDraw = () => {
     if (page > 1n) setPage(page - 1n);
   };
@@ -39,7 +32,6 @@ export const YourHistory = () => {
     hasNextPage && setPage(page + 1n);
   };
 
-  console.log("data:", data);
   return (
     <div className="rounded-[16px] bg-yuzu-cream p-8">
       <div className="flex justify-between">
@@ -62,11 +54,10 @@ export const YourHistory = () => {
           <div className="font-normal">#</div>
           <div className="font-normal">Date</div>
           <div className="font-normal">Total Tickets</div>
-          {/* <div className="font-normal">Winning Tickets</div> */}
           <div className="font-normal text-right">Prize Won</div>
         </div>
 
-        {data?.map((item) => (
+        {historyListRaw?.map((item) => (
           <div
             key={item.roundId.toString()}
             className="grid grid-cols-4 text-[#000] text-[14px] mb-2 items-center"
@@ -78,11 +69,8 @@ export const YourHistory = () => {
             <div className="font-medium">
               {item.totalTicketCount.toString()}
             </div>
-            {/* <div className="font-medium">
-              {formatEther(item.totalAmountSpent)}
-            </div> */}
             <div className="font-medium text-right">
-              {item.winningTicketCount.toString()}
+              {item.prizeWon.toString()}
             </div>
           </div>
         ))}

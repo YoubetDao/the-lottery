@@ -295,12 +295,25 @@ export const ILotteryABI = [
 	},
 	{
 		inputs: [],
+		name: "getLastDrawnRoundId",
+		outputs: [
+			{
+				internalType: "int256",
+				name: "",
+				type: "int256",
+			},
+		],
+		stateMutability: "view",
+		type: "function",
+	},
+	{
+		inputs: [],
 		name: "getLastRoundId",
 		outputs: [
 			{
-				internalType: "uint256",
+				internalType: "int256",
 				name: "result",
-				type: "uint256",
+				type: "int256",
 			},
 		],
 		stateMutability: "view",

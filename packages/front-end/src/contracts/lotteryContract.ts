@@ -27,11 +27,42 @@ export function useLastRoundId() {
   };
 }
 
-export function useGenerateSigParam(
-  holder: `0x${string}`,
-  roundId: number | bigint
-) {
+export function useRoundInfo() {
+  const {
+    lastRoundId,
+    isPending: isRoundIdLoading,
+    error: roundIdError,
+  } = useLastRoundId();
+
   const { data, isPending, error } = (useReadContract as any)({
+    address: LOTTERY_ADDRESS,
+    abi: lotteryAbi,
+    functionName: "rounds",
+    args: [lastRoundId],
+  });
+
+  return {
+    isOpen: data?.[0],
+    startTime: data?.[1],
+    endTime: data?.[2],
+    rewardAmount: data?.[3],
+    winnerCount: data?.[4],
+    totalTickets: data?.[5],
+    accumulatedAmount: data?.[6],
+    accumulatedParticipants: data?.[7],
+    winNumber: data?.[8],
+    isPending,
+    error,
+  };
+}
+
+export function useGenerateSigParam(holder: `0x${string}`, roundId: number | bigint) {
+
+  const {
+    data,
+    isPending,
+    error,
+  } = (useReadContract as any)({
     address: LOTTERY_ADDRESS as `0x${string}`,
     abi: lotteryAbi,
     functionName: "generateSigParam",

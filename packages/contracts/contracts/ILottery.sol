@@ -46,7 +46,10 @@ abstract contract ILottery {
     ) external view virtual returns (LotteryDataLayout.UserHistory memory);
 
     // @dev Get the last round of the lottery
-    function getLastRoundId() external view virtual returns (uint256);
+    function getLastRoundId() external view virtual returns (int256);
+
+    // @dev Get the last drawn round ID
+    function getLastDrawnRoundId() external view virtual returns (int256);
 
     // @dev Generate parameters for signature verification
     function generateSigParam(

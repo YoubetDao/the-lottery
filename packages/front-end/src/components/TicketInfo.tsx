@@ -1,14 +1,52 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { ContractInfo, TicketData, CountdownData } from "../types";
 import { ReactComponent as CopyIcon } from "../assets/copy-icon.svg";
 import { LOTTERY_ADDRESS } from "../config/contracts";
-import { usePointsSignature, useBuy } from "../contracts/lotteryContract";
+import { usePointsSignature, useBuy, useRoundInfo } from "../contracts/lotteryContract";
 
-// 添加地址格式化辅助函数
+// Helper function to format address
 const formatAddress = (address: string) => {
   if (!address) return "";
   return `${address.slice(0, 6)}...${address.slice(-6)}`;
 };
+
+// Helper function to format timestamp to custom UTC string
+function formatTimestampToUtcString(timestamp: bigint): string {
+  const date = new Date(Number(timestamp) * 1000); // Convert to milliseconds
+  const day = date.getUTCDate();
+  const month = date.toLocaleString('en-US', { month: 'short', timeZone: 'UTC' }); // 'Sep'
+  const hour = date.getUTCHours();
+  const ampm = hour >= 12 ? 'PM' : 'AM';
+  const formattedHour = hour % 12 === 0 ? 12 : hour % 12;
+  // Add English ordinal suffix: 1st, 2nd, 3rd, 4th...
+  const daySuffix = (d: number): string => {
+    if (d >= 11 && d <= 13) return `${d}th`;
+    switch (d % 10) {
+      case 1: return `${d}st`;
+      case 2: return `${d}nd`;
+      case 3: return `${d}rd`;
+      default: return `${d}th`;
+    }
+  };
+  return `${daySuffix(day)} ${month} at ${formattedHour} ${ampm} UTC`;
+}
+
+function getCountdownData(targetTimestamp: bigint): CountdownData {
+  const now = Date.now(); // Current time in milliseconds
+  const targetTime = Number(targetTimestamp) * 1000; // Convert target timestamp to milliseconds
+
+  let diff = Math.max(0, targetTime - now); // Ensure non-negative time difference in milliseconds
+
+  const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+  diff %= (1000 * 60 * 60 * 24);
+
+  const hours = Math.floor(diff / (1000 * 60 * 60));
+  diff %= (1000 * 60 * 60);
+
+  const minutes = Math.floor(diff / (1000 * 60));
+
+  return { days, hours, minutes };
+}
 
 interface TicketInfoProps {
   initialContractInfo?: ContractInfo;
@@ -28,17 +66,42 @@ const TicketInfo: React.FC<TicketInfoProps> = ({
     maxLimit: 100000,
   },
   initialCountdown = {
-    days: 1,
-    hours: 22,
-    minutes: 23,
+    days: 0,
+    hours: 0,
+    minutes: 0,
   },
 }) => {
   const [ticketData, setTicketData] = useState<TicketData>(initialTicketData);
-  const [contractInfo] = useState<ContractInfo>(initialContractInfo);
-  const [countdown] = useState<CountdownData>(initialCountdown);
-
+  const [contractInfo, setContractInfo] = useState<ContractInfo>(initialContractInfo);
+  const [countdown, setCountdown] = useState<CountdownData>(initialCountdown);
+  const [copied, setCopied] = useState(false);
   const { signForBuy, isLoading: isSignLoading } = usePointsSignature();
   const { buy, isPending: isBuyPending, hash, error: buyError } = useBuy();
+  const { isOpen, startTime, endTime, isPending: isRoundInfoPending, error: roundInfoError } = useRoundInfo();
+
+  console.log('endTime: ', endTime)
+  console.log('format endtime: ', formatTimestampToUtcString(endTime))
+
+  // Only update contractInfo when endTime changes
+  useEffect(() => {
+    if (endTime) {
+      setContractInfo((prev) => ({
+        ...prev,
+        nextDraw: formatTimestampToUtcString(endTime),
+      }));
+
+      setCountdown(getCountdownData(endTime));
+    }
+  }, [endTime]);
+
+  // Auto-update countdown every second based on fixedEndTime
+  useEffect(() => {
+    if (!endTime) return;
+    const timer = setInterval(() => {
+      setCountdown(getCountdownData(endTime));
+    }, 5000);
+    return () => clearInterval(timer);
+  }, [endTime]);
 
   const handleQuantityChange = (quantity: number) => {
     setTicketData({
@@ -73,6 +136,20 @@ const TicketInfo: React.FC<TicketInfoProps> = ({
       console.error("购买失败:", error);
     }
   };
+
+  // Handle copy button click
+  const handleCopy = () => {
+    navigator.clipboard.writeText(contractInfo.address);
+    setCopied(true);
+  };
+
+  // Automatically hide the copied message after 1.5 seconds
+  useEffect(() => {
+    if (copied) {
+      const timer = setTimeout(() => setCopied(false), 1500);
+      return () => clearTimeout(timer);
+    }
+  }, [copied]);
 
   const [labelStyle, valueStyle] = [
     "text-base leading-[1.6rem] font-poppins text-[#102C24]",
@@ -110,12 +187,13 @@ const TicketInfo: React.FC<TicketInfoProps> = ({
                 {formatAddress(contractInfo.address)}
                 <button
                   className="ml-1 text-green-700"
-                  onClick={() =>
-                    navigator.clipboard.writeText(contractInfo.address)
-                  }
+                  onClick={handleCopy}
                 >
                   <CopyIcon />
                 </button>
+                {copied && (
+                  <span className="ml-2 text-xs text-green-600">Copied!</span>
+                )}
               </span>
             </div>
             <div className="flex justify-between mb-3">
@@ -203,9 +281,9 @@ const TicketInfo: React.FC<TicketInfoProps> = ({
 
           <div className="text-xs text-center text-white/80">
             {buyError ? (
-              <span className="text-red-400">{buyError.message}</span>
+              <span className="text-red-400">Purchase failed</span>
             ) : hash ? (
-              <span className="text-green-400">购买成功！</span>
+              <span className="text-green-400">buy successful</span>
             ) : (
               "Buying ticket will cost YUZU, and all purchases are final"
             )}

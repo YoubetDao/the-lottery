@@ -107,8 +107,13 @@ export function useBuy() {
     signature: `0x${string}`;
     deadline: bigint | number;
   }) => {
-    if (!roundId || !amount || !signature || !deadline) {
+
+    if (roundId == null || amount == null || !signature || deadline == null) {
       throw new Error("Missing required parameters");
+    }
+
+    if (roundId == -1) {
+      throw new Error("No round is open now");
     }
 
     return await (writeContractAsync as any)({
@@ -155,12 +160,12 @@ export function usePointsSignature() {
    * 生成购买彩票所需的签名
    */
   async function signForBuy(amount: bigint) {
-    if (!chainId) throw new Error("chainId not found");
-    if (!address) throw new Error("wallet not connected");
-    if (isRoundIdLoading) throw new Error("roundId not ready");
-    if (!lastRoundId) throw new Error("invalid roundId");
-    if (!consumeReasonCode || nonce === undefined)
-      throw new Error("signature params not ready");
+    if (!chainId) throw new Error('chainId not found')
+    if (!address) throw new Error('wallet not connected')
+    if (isRoundIdLoading) throw new Error('roundId not ready')
+    if (lastRoundId < -1) throw new Error('invalid roundId')
+    if (lastRoundId === -1) throw new Error("No round is open now")
+    if (!consumeReasonCode || nonce === undefined) throw new Error('signature params not ready')
 
     const deadline = BigInt(Math.floor(Date.now() / 1000) + 3600); // 1小时后过期
 
@@ -209,10 +214,37 @@ export function usePointsSignature() {
     signForBuy,
     isLoading: isRoundIdLoading || isParamLoading,
     roundId: lastRoundId,
-    error: roundIdError || paramError,
+    error: roundIdError || paramError
+  }
+}
+
+// Hook to get user round history
+export function useUserRoundHistory() {
+
+  const { address: walletAddress} = useAccount()
+
+  const {
+    lastRoundId: roundId,
+    isPending: isRoundIdLoading,
+    error: roundIdError,
+  } = useLastRoundId();
+
+  const { data, isPending, error } = (useReadContract as any)({
+    address: LOTTERY_ADDRESS,
+    abi: lotteryAbi,
+    functionName: "getUserRoundHistory",
+    args: [walletAddress, BigInt(roundId)],
+  });
+
+  return {
+    roundId: data?.[0],
+    startTime: data?.[1],
+    endTime: data?.[2],
+    totalAmountSpent: data?.[3],
+    totalTicketCount: data?.[4],
+    winningTicketCount: data?.[5],
+    prizeWon: data?.[6],
+    isPending,
+    error,
   };
 }
-export const wagmiContractConfig = {
-  address: LOTTERY_ADDRESS,
-  abi: ILotteryABI,
-} as const;

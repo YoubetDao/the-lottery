@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { ContractInfo, TicketData, CountdownData } from "../types";
 import { ReactComponent as CopyIcon } from "../assets/copy-icon.svg";
 import { LOTTERY_ADDRESS } from "../config/contracts";
-import { usePointsSignature, useBuy, useRoundInfo } from "../contracts/lotteryContract";
+import { usePointsSignature, useBuy, useRoundInfo, useUserRoundHistory } from "../contracts/lotteryContract";
 
 // Helper function to format address
 const formatAddress = (address: string) => {
@@ -78,6 +78,7 @@ const TicketInfo: React.FC<TicketInfoProps> = ({
   const { signForBuy, isLoading: isSignLoading } = usePointsSignature();
   const { buy, isPending: isBuyPending, hash, error: buyError } = useBuy();
   const { isOpen, startTime, endTime, isPending: isRoundInfoPending, error: roundInfoError } = useRoundInfo();
+  const { roundId, totalAmountSpent, totalTicketCount, winningTicketCount, prizeWon, isPending, error } = useUserRoundHistory();
 
   console.log('endTime: ', endTime)
   console.log('format endtime: ', formatTimestampToUtcString(endTime))
@@ -93,6 +94,15 @@ const TicketInfo: React.FC<TicketInfoProps> = ({
       setCountdown(getCountdownData(endTime));
     }
   }, [endTime]);
+
+  useEffect(() => {
+    if (totalTicketCount) {
+      setContractInfo((prev) => ({
+        ...prev,
+        userTickets: totalTicketCount,
+      }));
+    }
+  }, [totalTicketCount])
 
   // Auto-update countdown every second based on fixedEndTime
   useEffect(() => {
@@ -210,6 +220,7 @@ const TicketInfo: React.FC<TicketInfoProps> = ({
 
       {/* Right Panel - Ticket Purchase */}
       <div className="relative top-[-120px]">
+        <section id="buy_ticket">
         <div className="bg-[#FFA706] rounded-t-[16px] px-8 py-6 border-[2px] w-[490px] border-[#102C24]">
           <div className="flex justify-between items-center mb-2">
             <div className="text-[#102C24] text-[14px] font-medium ">Buy</div>
@@ -265,6 +276,7 @@ const TicketInfo: React.FC<TicketInfoProps> = ({
             </button>
           </div>
         </div>
+        </section>
 
         <div className="bg-[#157433] rounded-b-[16px] px-8 py-6 border-x-[2px] border-t-[1px] border-[#102C24] shadow-[0_4px_0_rgba(0,0,0,1)]">
           <div className="flex justify-between mb-4 text-white">

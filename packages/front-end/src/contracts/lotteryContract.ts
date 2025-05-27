@@ -234,14 +234,16 @@ export function useUserRoundHistory() {
     args: [walletAddress, BigInt(roundId)],
   });
 
+  console.log('UserHistory raw data:', data);
+
   return {
-    roundId: data?.[0],
-    startTime: data?.[1],
-    endTime: data?.[2],
-    totalAmountSpent: data?.[3],
-    totalTicketCount: data?.[4],
-    winningTicketCount: data?.[5],
-    prizeWon: data?.[6],
+    roundId: data?.roundId,
+    startTime: data?.startTime,
+    endTime: data?.endTime,
+    totalAmountSpent: data?.totalAmountSpent,
+    totalTicketCount: data?.totalTicketCount,
+    winningTicketCount: data?.winningTicketCount,
+    prizeWon: data?.prizeWon,
     isPending,
     error,
   };

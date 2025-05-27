@@ -82,6 +82,7 @@ const TicketInfo: React.FC<TicketInfoProps> = ({
 
   console.log('endTime: ', endTime)
   console.log('format endtime: ', formatTimestampToUtcString(endTime))
+  console.log('totalTicketCount: ', totalTicketCount)
 
   // Only update contractInfo when endTime changes
   useEffect(() => {
@@ -104,12 +105,13 @@ const TicketInfo: React.FC<TicketInfoProps> = ({
     }
   }, [totalTicketCount])
 
-  // Auto-update countdown every second based on fixedEndTime
+  // Auto-update countdown every second based on fixedEndTime (only in production)
   useEffect(() => {
+    if (process.env.NODE_ENV !== 'production') return;
     if (!endTime) return;
     const timer = setInterval(() => {
       setCountdown(getCountdownData(endTime));
-    }, 5000);
+    }, 1000);
     return () => clearInterval(timer);
   }, [endTime]);
 

@@ -27,9 +27,8 @@ const Hero: React.FC<HeroProps> = ({ prizeAmount = "$765,772" }) => {
             </div>
             <button
               className="bg-yuzu-green py-6 px-8 font-semibold text-black mb-8 yuzu-button-border"
-              onClick={() => console.log("Buy ticket clicked")}
             >
-              Buy Ticket
+              <a href="#buy_ticket">Buy Ticket</a>
             </button>
           </div>
           <img src={require("../assets/coin.png")} alt="yuzu coin" />

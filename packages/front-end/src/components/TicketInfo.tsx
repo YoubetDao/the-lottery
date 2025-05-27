@@ -94,6 +94,15 @@ const TicketInfo: React.FC<TicketInfoProps> = ({
     }
   }, [endTime]);
 
+  // Auto-update countdown every second based on fixedEndTime
+  useEffect(() => {
+    if (!endTime) return;
+    const timer = setInterval(() => {
+      setCountdown(getCountdownData(endTime));
+    }, 5000);
+    return () => clearInterval(timer);
+  }, [endTime]);
+
   const handleQuantityChange = (quantity: number) => {
     setTicketData({
       ...ticketData,

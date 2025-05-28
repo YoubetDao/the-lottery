@@ -214,7 +214,11 @@ export const AllHistory = () => {
                 <div className="font-normal text-center">Address</div>
                 <div className="font-normal text-right">Prize</div>
               </div>
-              {new Array(accumulatedParticipants).map((_, item) => (
+              {new Array(
+                Number(accumulatedParticipants) >= 3
+                  ? 3
+                  : accumulatedParticipants
+              ).map((_, item) => (
                 <div
                   key={item}
                   className="grid grid-cols-3 text-[#000] text-[14px] mb-2 items-center"

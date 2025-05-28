@@ -63,12 +63,6 @@ export function useGenerateSigParam(holder: `0x${string}`, roundId: number | big
     args: [holder, BigInt(roundId)],
   })
 
-  useEffect(() => {
-  console.log('data', data)
-    console.log('isPending', isPending)
-    console.log('error', error)
-  }, [data, isPending, error])
-
   return {
     consumeReasonCode: data ? data[0] : undefined,
     nonce: data ? Number(data[1]) : undefined,
@@ -138,7 +132,6 @@ export function usePointsSignature() {
 
   // 获取最新轮次ID
   const { lastRoundId, isPending: isRoundIdLoading, error: roundIdError } = useLastRoundId()
-  console.log('lastRoundId', lastRoundId)
 
   // 获取签名参数
   const {
@@ -151,8 +144,6 @@ export function usePointsSignature() {
     lastRoundId
   )
 
-  console.log('consumeReasonCode', consumeReasonCode)
-  console.log('nonce', nonce)
 
   /**
    * 生成购买彩票所需的签名
@@ -235,13 +226,13 @@ export function useUserRoundHistory() {
   });
 
   return {
-    roundId: data?.[0],
-    startTime: data?.[1],
-    endTime: data?.[2],
-    totalAmountSpent: data?.[3],
-    totalTicketCount: data?.[4],
-    winningTicketCount: data?.[5],
-    prizeWon: data?.[6],
+    roundId: data?.roundId,
+    startTime: data?.startTime,
+    endTime: data?.endTime,
+    totalAmountSpent: data?.totalAmountSpent,
+    totalTicketCount: data?.totalTicketCount,
+    winningTicketCount: data?.winningTicketCount,
+    prizeWon: data?.prizeWon,
     isPending,
     error,
   };

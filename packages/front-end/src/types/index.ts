@@ -6,13 +6,6 @@ export interface TicketData {
   maxLimit: number;
 }
 
-export interface DrawData {
-  roundNumber: number;
-  isLatest: boolean;
-  drawDate: string;
-  winningNumbers: number[];
-}
-
 export interface CountdownData {
   days: number;
   hours: number;
@@ -30,13 +23,3 @@ export interface StepInfo {
   title: string;
   description: string;
 }
-
-export type UserHistoryItem = {
-  roundId: bigint;
-  startTime: bigint;
-  endTime: bigint;
-  totalAmountSpent: bigint;
-  totalTicketCount: bigint;
-  winningTicketCount: bigint;
-  prizeWon: bigint;
-};

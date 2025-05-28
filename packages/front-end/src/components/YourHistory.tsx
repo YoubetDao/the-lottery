@@ -1,29 +1,13 @@
-import { useAccount, useReadContract } from "wagmi";
-import { wagmiContractConfig } from "../contracts/lotteryContract";
 import { useState } from "react";
 import { ReactComponent as ChevronLeft } from "../assets/chevron-left.svg";
 import { ReactComponent as ChevronRight } from "../assets/chevron-right.svg";
-import { UserHistoryItem } from "../types";
+import { useYourHistory } from "../contracts/lotteryContract";
 
 export const YourHistory = () => {
-  const { isConnected, address } = useAccount();
   const [page, setPage] = useState<bigint>(1n);
   const pageSize = 10n;
-
-  const { data } = useReadContract({
-    abi: wagmiContractConfig.abi,
-    address: wagmiContractConfig.address,
-    functionName: "getUserHistory",
-    args: isConnected && address ? [address, page, pageSize] : undefined,
-    query: {
-      enabled: !!address,
-    },
-  });
-  const historyListRaw = Array.isArray(data?.[0])
-    ? (data[0] as UserHistoryItem[])
-    : [];
-  const hasMore = typeof data?.[1] === "boolean" ? (data[1] as boolean) : false;
-  const hasNextPage = hasMore || false;
+  const { historyListRaw, hasMore } = useYourHistory(page, pageSize);
+ const hasNextPage = hasMore || false;
   const handlePreviousDraw = () => {
     if (page > 1n) setPage(page - 1n);
   };

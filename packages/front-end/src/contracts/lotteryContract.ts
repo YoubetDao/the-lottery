@@ -248,3 +248,62 @@ export function useUserRoundHistory() {
     error,
   };
 }
+
+export function useYourHistory(page: bigint, pageSize: bigint) {
+  const { isConnected, address } = useAccount();
+  const { data } = useReadContract({
+    address: LOTTERY_ADDRESS,
+    abi: lotteryAbi,
+    functionName: "getUserHistory",
+    args: isConnected && address ? [address, page, pageSize] : undefined,
+    query: {
+      enabled: !!address,
+    },
+  });
+
+  return {
+    historyListRaw: data?.[0],
+    hasMore: data?.[1],
+  };
+}
+
+export function useLastEndRoundId() {
+  const {
+    data: lastRoundId,
+    error,
+    isPending,
+  } = (useReadContract as any)({
+    address: LOTTERY_ADDRESS,
+    abi: lotteryAbi,
+    functionName: "getLastDrawnRoundId",
+  });
+
+  return {
+    lastEndRoundId: lastRoundId ? Number(lastRoundId) : 0,
+    error,
+    isPending,
+  };
+}
+
+export function useRoundsHistory(roundId: bigint) {
+  const { data, isLoading, error } = useReadContract({
+    address: LOTTERY_ADDRESS,
+    abi: lotteryAbi,
+    functionName: "getRound",
+    args: [roundId],
+  });
+
+  return {
+    isOpen: data?.isOpen,
+    startTime: data?.startTime,
+    endTime: data?.endTime,
+    rewardAmount: data?.rewardAmount,
+    winnerCount: data?.winnerCount,
+    prizeTiers: data?.prizeTiers,
+    totalTickets: data?.totalTickets,
+    accumulatedAmount: data?.accumulatedAmount,
+    accumulatedParticipants: data?.accumulatedParticipants,
+    winnerUsers: data?.winnerUsers,
+    winNumber: data?.winNumber,
+  };
+}

@@ -1,13 +1,8 @@
 import React, { useState } from "react";
-import { DrawData } from "../types";
-import { AllHistory } from "./AllHistort";
+import { AllHistory } from "./AllHistory";
 import { YourHistory } from "./YourHistory";
 
-interface DrawHistoryProps {
-  initialDrawData?: DrawData;
-}
-
-const DrawHistory: React.FC<DrawHistoryProps> = () => {
+const DrawHistory: React.FC = () => {
   const [activeTab, setActiveTab] = useState<"all" | "your">("all");
 
   return (

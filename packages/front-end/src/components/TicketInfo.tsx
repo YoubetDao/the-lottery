@@ -80,9 +80,6 @@ const TicketInfo: React.FC<TicketInfoProps> = ({
   const { isOpen, startTime, endTime, isPending: isRoundInfoPending, error: roundInfoError } = useRoundInfo();
   const { roundId, totalAmountSpent, totalTicketCount, winningTicketCount, prizeWon, isPending, error } = useUserRoundHistory();
 
-  console.log('endTime: ', endTime)
-  console.log('format endtime: ', formatTimestampToUtcString(endTime))
-
   // Only update contractInfo when endTime changes
   useEffect(() => {
     if (endTime) {
@@ -104,12 +101,13 @@ const TicketInfo: React.FC<TicketInfoProps> = ({
     }
   }, [totalTicketCount])
 
-  // Auto-update countdown every second based on fixedEndTime
+  // Auto-update countdown every second based on fixedEndTime (only in production)
   useEffect(() => {
+    if (process.env.NODE_ENV !== 'production') return;
     if (!endTime) return;
     const timer = setInterval(() => {
       setCountdown(getCountdownData(endTime));
-    }, 5000);
+    }, 1000);
     return () => clearInterval(timer);
   }, [endTime]);
 
@@ -122,28 +120,17 @@ const TicketInfo: React.FC<TicketInfoProps> = ({
 
   const handleBuyTickets = async () => {
     try {
-      // 1. 获取签名
       const amount = BigInt(ticketData.quantity);
-      // 1. 获取签名
       const { signature, deadline, roundId } = await signForBuy(amount);
 
-      console.log('roundid', roundId)
-      console.log('signature', signature)
-      console.log('deadline', deadline)
-      console.log('amount', amount)
-
-      // 2. 调用购买方法
       const txHash = await buy({
         roundId,
         amount,
         signature,
         deadline,
       });
-
-
-      console.log(`购买交易已发送: ${txHash}`);
     } catch (error) {
-      console.error("购买失败:", error);
+      console.error("handleBuyTickets error:", error);
     }
   };
 

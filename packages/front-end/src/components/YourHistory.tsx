@@ -2,12 +2,13 @@ import { useState } from "react";
 import { ReactComponent as ChevronLeft } from "../assets/chevron-left.svg";
 import { ReactComponent as ChevronRight } from "../assets/chevron-right.svg";
 import { useYourHistory } from "../contracts/lotteryContract";
+import { UserHistory } from "../types";
 
 export const YourHistory = () => {
   const [page, setPage] = useState<bigint>(1n);
   const pageSize = 10n;
   const { historyListRaw, hasMore } = useYourHistory(page, pageSize);
- const hasNextPage = hasMore || false;
+  const hasNextPage = hasMore || false;
   const handlePreviousDraw = () => {
     if (page > 1n) setPage(page - 1n);
   };
@@ -41,7 +42,7 @@ export const YourHistory = () => {
           <div className="font-normal text-right">Prize Won</div>
         </div>
 
-        {historyListRaw?.map((item) => (
+        {historyListRaw?.map((item: UserHistory) => (
           <div
             key={item.roundId.toString()}
             className="grid grid-cols-4 text-[#000] text-[14px] mb-2 items-center"

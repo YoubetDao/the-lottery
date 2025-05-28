@@ -1,4 +1,4 @@
-import { ethers, network } from "hardhat";
+import env, { ethers, network } from "hardhat";
 import { CustomConfig, isValidNetwork } from "./config";
 
 async function main() {
@@ -21,7 +21,21 @@ async function main() {
 		CustomConfig[networkName].pointsContract
 	);
 
-	console.log("Lottery contract deployed to:", await lottery.getAddress());
+	const lotteryAddress = await lottery.getAddress();
+	console.log("Lottery contract deployed to:", lotteryAddress);
+
+	// Wait for 2 seconds to ensure the contract is properly deployed
+	await new Promise((resolve) => setTimeout(resolve, 5000));
+
+	// verify logic
+	await env.run("verify:verify", {
+		address: lotteryAddress,
+		constructorArguments: [
+			deployer.address,
+			CustomConfig[networkName].pointsContract,
+		],
+		contract: "contracts/Lottery.sol:Lottery",
+	});
 }
 
 main()

@@ -163,7 +163,7 @@ export const AllHistory = () => {
                 ?.toString()
                 .slice(-6)
                 .split("")
-                .map((num, index) => (
+                .map((num: string, index: number) => (
                   <div
                     key={index}
                     className="w-[110px] h-[120px] relative flex items-center justify-center"

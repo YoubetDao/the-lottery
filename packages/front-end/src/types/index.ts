@@ -23,3 +23,13 @@ export interface StepInfo {
   title: string;
   description: string;
 }
+
+export type UserHistory = {
+  roundId: bigint;
+  startTime: bigint;
+  endTime: bigint;
+  totalAmountSpent: bigint;
+  totalTicketCount: bigint;
+  winningTicketCount: bigint;
+  prizeWon: bigint;
+};

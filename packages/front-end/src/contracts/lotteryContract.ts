@@ -238,7 +238,7 @@ export function useUserRoundHistory() {
 
 export function useYourHistory(page: bigint, pageSize: bigint) {
   const { isConnected, address } = useAccount();
-  const { data } = useReadContract({
+  const { data } = (useReadContract as any)({
     address: LOTTERY_ADDRESS,
     abi: lotteryAbi,
     functionName: "getUserHistory",
@@ -273,7 +273,7 @@ export function useLastEndRoundId() {
 }
 
 export function useRoundsHistory(roundId: bigint) {
-  const { data, isLoading, error } = useReadContract({
+  const { data, isLoading, error } = (useReadContract as any)({
     address: LOTTERY_ADDRESS,
     abi: lotteryAbi,
     functionName: "getRound",

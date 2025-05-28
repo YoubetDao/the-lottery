@@ -44,7 +44,7 @@ async function main() {
 	const value = {
 		holder: deployer.address,
 		spender: lotteryContract,
-		amount: 1,
+		amount: 100,
 		reasonCode: consumeReasonCode,
 		deadline: Math.floor(Date.now() / 1000) + 1 * 60 * 60,
 		nonce: nonce,

@@ -24,12 +24,17 @@ async function main() {
 	// Get current timestamp in seconds
 	const currentTimestamp = Math.floor(Date.now() / 1000);
 	const startTime = currentTimestamp - 7 * 24 * 60 * 60;
-	const endTime = currentTimestamp + 1 * 24 * 60 * 60;
+	const endTime = currentTimestamp + 1 * 1 * 2 * 60;
+
+	console.log("startTime:", new Date(startTime * 1000).toLocaleString());
+	console.log("endTime:", new Date(endTime * 1000).toLocaleString());
 
 	const prizeTiers = [
-		ethers.parseEther("1"),
-		ethers.parseEther("2"),
-		ethers.parseEther("3"),
+		ethers.parseEther("0.03"),
+		ethers.parseEther("0.02"),
+		ethers.parseEther("0.01"),
+		ethers.parseEther("0.005"),
+		ethers.parseEther("0.001"),
 	];
 
 	const tx = await lottery.createRound(startTime, endTime, prizeTiers);

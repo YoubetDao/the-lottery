@@ -263,17 +263,15 @@ contract Lottery is LotteryDataLayout, ILottery, Ownable {
         require(participantCount > 0, "No participants");
 
         // generate a random number
-        round.winNumber =
-            uint256(
-                keccak256(
-                    abi.encodePacked(
-                        block.prevrandao,
-                        block.timestamp,
-                        participantCount
-                    )
+        round.winNumber = uint256(
+            keccak256(
+                abi.encodePacked(
+                    block.prevrandao,
+                    block.timestamp,
+                    participantCount
                 )
-            ) %
-            participantCount;
+            )
+        );
 
         // 选择多个获奖者
         address[] memory winners = new address[](round.winnerCount);

@@ -61,8 +61,8 @@ const TicketInfo: React.FC<TicketInfoProps> = ({
     userTickets: 0,
   },
   initialTicketData = {
-    cost: 500,
-    quantity: 500,
+    cost: 5,
+    quantity: 5,
     maxLimit: 100000,
   },
   initialCountdown = {
@@ -218,7 +218,7 @@ const TicketInfo: React.FC<TicketInfoProps> = ({
                 const limitedValue = Math.min(value, ticketData.maxLimit);
                 handleQuantityChange(limitedValue);
               }}
-              className="text-5xl font-bold text-[#2D6A4F] bg-transparent w-32 outline-none"
+              className="text-5xl font-bold text-[#2D6A4F] bg-transparent w-48 outline-none"
               min="0"
               max={ticketData.maxLimit}
             />

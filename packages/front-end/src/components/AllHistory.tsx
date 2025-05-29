@@ -37,7 +37,7 @@ function drawnDateDisplay(endTime: bigint | undefined) {
   return `${day}th ${month} at ${isAM ? hours : hours - 12} ${amPm} UTC`;
 }
 
-function formatAmount(amount: number, decimals: number = 17) {
+export function formatAmount(amount: number, decimals: number = 17) {
   if (amount === 0) return 0;
   return amount / Math.pow(10, decimals);
 }
@@ -74,7 +74,7 @@ export const AllHistory = () => {
 
   const handleNextDraw = () => {
     console.log("Navigate to next draw");
-    if (lastRoundId <= currentDraw + 1) {
+    if (lastEndRoundId <= currentDraw + 1) {
       return;
     } else {
       setCurrentDraw(currentDraw + 1);
@@ -129,7 +129,7 @@ export const AllHistory = () => {
 
               <div
                 className={`w-10 h-10 ${
-                  lastEndRoundId > 0 && lastRoundId > currentDraw + 1
+                  lastEndRoundId > 0 && lastEndRoundId > currentDraw + 1
                     ? "cursor-pointer"
                     : "opacity-25 cursor-not-allowed"
                 }`}

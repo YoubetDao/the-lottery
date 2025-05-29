@@ -231,26 +231,30 @@ const TicketInfo: React.FC<TicketInfoProps> = ({
 
           <div className="flex justify-between gap-2">
             <button
-              className="bg-[#f39321] hover:bg-[#f39321] flex-1 py-2 rounded-lg text-[#fff6a4] font-medium"
+              className="bg-[#f39321] hover:bg-[#f39321] flex-1 py-2 rounded-lg text-[#fff6a4] font-medium disabled:opacity-50 disabled:cursor-not-allowed"
               onClick={() => handleQuantityChange(5)}
+              disabled={!isConnected}
             >
               5
             </button>
             <button
-              className="bg-[#f39321] hover:bg-[#f39321] flex-1 py-2 rounded-lg text-[#fff6a4] font-medium"
+              className="bg-[#f39321] hover:bg-[#f39321] flex-1 py-2 rounded-lg text-[#fff6a4] font-medium disabled:opacity-50 disabled:cursor-not-allowed"
               onClick={() => handleQuantityChange(10)}
+              disabled={!isConnected}
             >
               10
             </button>
             <button
-              className="bg-[#f39321] hover:bg-[#f39321] flex-1 py-2 rounded-lg text-[#fff6a4] font-medium"
+              className="bg-[#f39321] hover:bg-[#f39321] flex-1 py-2 rounded-lg text-[#fff6a4] font-medium disabled:opacity-50 disabled:cursor-not-allowed"
               onClick={() => handleQuantityChange(50)}
+              disabled={!isConnected}
             >
               50
             </button>
             <button
-              className="bg-[#f39321] hover:bg-[#f39321] flex-1 py-2 rounded-lg text-[#fff6a4] font-medium"
+              className="bg-[#f39321] hover:bg-[#f39321] flex-1 py-2 rounded-lg text-[#fff6a4] font-medium disabled:opacity-50 disabled:cursor-not-allowed"
               onClick={() => handleQuantityChange(ticketData.maxLimit)}
+              disabled={!isConnected}
             >
               MAX
             </button>

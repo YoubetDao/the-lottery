@@ -209,17 +209,6 @@ const TicketInfo: React.FC<TicketInfoProps> = ({
       <div className="relative top-[-120px]">
         <section id="buy_ticket">
         <div className="bg-[#FFA706] rounded-t-[16px] px-8 py-6 border-[2px] w-[490px] border-[#102C24]">
-          <div className="flex justify-between items-center mb-2">
-            <div className="text-[#102C24] text-[14px] font-medium ">Buy</div>
-            {/* <div className="text-[#2D6A4F] font-medium">MAX {ticketData.maxLimit.toLocaleString()} YUZU</div> */}
-            <div className="font-medium flex items-center">
-              <span className="text-[#157433] font-bold">MAX</span>
-              <span className="ml-2 text-[#102C24] font-bold">
-                {ticketData.maxLimit.toLocaleString()} YUZU
-              </span>
-            </div>
-          </div>
-
           <div className="flex justify-between items-center mb-4">
             <input
               type="number"

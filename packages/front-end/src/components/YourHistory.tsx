@@ -24,13 +24,20 @@ export const YourHistory = () => {
         <div className="color-[#102C24] font-semibold text-[16px] ">Rounds</div>
         <div className="flex gap-2">
           <div
-            className="cursor-pointer w-10 h-10"
+            className={`w-10 h-10 ${
+              page > 1n ? "cursor-pointer" : "opacity-25 cursor-not-allowed"
+            }`}
             onClick={handlePreviousDraw}
           >
             <ChevronLeft width={24} height={24} />
           </div>
 
-          <div className="cursor-pointer w-10 h-10" onClick={handleNextDraw}>
+          <div
+            className={`w-10 h-10 ${
+              hasMore ? "cursor-pointer" : "opacity-25 cursor-not-allowed"
+            }`}
+            onClick={handleNextDraw}
+          >
             <ChevronRight width={24} height={24} />
           </div>
         </div>

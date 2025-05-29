@@ -64,7 +64,6 @@ export const AllHistory = () => {
   }, [lastEndRoundId]);
 
   const handlePreviousDraw = () => {
-    console.log("Navigate to previous draw");
     if (lastEndRoundId === -1 || currentDraw - 1 < 0) {
       return;
     } else {
@@ -73,8 +72,7 @@ export const AllHistory = () => {
   };
 
   const handleNextDraw = () => {
-    console.log("Navigate to next draw");
-    if (lastEndRoundId <= currentDraw + 1) {
+    if (lastEndRoundId < currentDraw + 1) {
       return;
     } else {
       setCurrentDraw(currentDraw + 1);
@@ -82,7 +80,6 @@ export const AllHistory = () => {
   };
 
   const handleClose = () => {
-    console.log("Close draw history");
     setCurrentDraw(lastEndRoundId);
   };
 
@@ -129,7 +126,7 @@ export const AllHistory = () => {
 
               <div
                 className={`w-10 h-10 ${
-                  lastEndRoundId > 0 && lastEndRoundId > currentDraw + 1
+                  lastEndRoundId > 0 && currentDraw !== lastEndRoundId
                     ? "cursor-pointer"
                     : "opacity-25 cursor-not-allowed"
                 }`}
@@ -139,7 +136,7 @@ export const AllHistory = () => {
               </div>
               <div
                 className={`w-10 h-10 ${
-                  lastEndRoundId > 0
+                  lastEndRoundId > 0 && currentDraw !== lastEndRoundId
                     ? "cursor-pointer"
                     : "opacity-25 cursor-not-allowed"
                 }`}
@@ -180,7 +177,7 @@ export const AllHistory = () => {
                 ))}
             </div>
           </div>
-          <div className="text-center">
+          <div className="text-center mt-8">
             <button
               className={`text-[#008C50] font-semibold flex items-center mx-auto transition-opacity duration-300 ${
                 showDetails ? "opacity-0" : "opacity-100"
@@ -240,12 +237,12 @@ export const AllHistory = () => {
               </div>
             </div>
 
-            <div className="text-center mt-4">
+            <div className="text-center mt-8">
               <button
                 className="text-[#008C50] font-semibold flex items-center mx-auto"
                 onClick={() => setShowDetails(false)}
               >
-                Hide Details
+                Hide
                 <ChevronDown
                   width={24}
                   height={24}

@@ -3,6 +3,7 @@ import { ReactComponent as ChevronLeft } from "../assets/chevron-left.svg";
 import { ReactComponent as ChevronRight } from "../assets/chevron-right.svg";
 import { useYourHistory } from "../contracts/lotteryContract";
 import { UserHistory } from "../types";
+import { formatAmount } from "./AllHistory";
 
 export const YourHistory = () => {
   const [page, setPage] = useState<bigint>(1n);
@@ -55,7 +56,7 @@ export const YourHistory = () => {
               {item.totalTicketCount.toString()}
             </div>
             <div className="font-medium text-right">
-              {item.prizeWon.toString()}
+              {formatAmount(Number(item.prizeWon))}
             </div>
           </div>
         ))}

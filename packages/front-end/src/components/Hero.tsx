@@ -1,10 +1,16 @@
 import React from "react";
+import { useAccount } from "wagmi";
+import { useConnectModal } from '@rainbow-me/rainbowkit';
 
 interface HeroProps {
   prizeAmount?: string;
 }
 
 const Hero: React.FC<HeroProps> = ({ prizeAmount = "$765,772" }) => {
+
+  const { isConnected } = useAccount();
+  const { openConnectModal } = useConnectModal();
+
   return (
     <section id="yuzu_lottery">
       <div className="z-10 relative top-[85px] pb-8">
@@ -27,8 +33,9 @@ const Hero: React.FC<HeroProps> = ({ prizeAmount = "$765,772" }) => {
             </div>
             <button
               className="bg-yuzu-green py-6 px-8 font-semibold text-black mb-8 yuzu-button-border"
+              onClick={isConnected ? undefined : openConnectModal}
             >
-              <a href="#buy_ticket">Buy Ticket</a>
+              {isConnected ? <a href="#buy_ticket">Buy Ticket</a> : 'Connect Wallet'}
             </button>
           </div>
           <img src={require("../assets/coin.png")} alt="yuzu coin" />

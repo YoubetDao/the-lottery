@@ -269,10 +269,21 @@ const TicketInfo: React.FC<TicketInfoProps> = ({
           </div>
 
           <button
-            className="bg-[#C2F970] hover:bg-[#B5EC63] w-full py-3 rounded-lg text-[#102C24] font-bold mb-2 shadow-[0_3px_0_rgba(0,0,0,1)] border-2 border-[#102C24]"
-            onClick={isConnected ? handleBuyTickets : openConnectModal}
+            className="bg-[#C2F970] hover:bg-[#B5EC63] w-full py-3 rounded-lg text-[#102C24] font-bold mb-2 shadow-[0_3px_0_rgba(0,0,0,1)] border-2 border-[#102C24] disabled:opacity-50 disabled:cursor-not-allowed"
+            onClick={
+              !isConnected
+                ? openConnectModal
+                : isBuyPending
+                  ? undefined
+                  : handleBuyTickets
+            }
+            disabled={isBuyPending || !isConnected}
           >
-            {isConnected ? `Buy ${ticketData.quantity} Tickets` : 'Connect Wallet'}
+            {!isConnected
+              ? 'Connect Wallet'
+              : isBuyPending
+                ? 'Confirm in wallet...'
+                : `Buy ${ticketData.quantity} Tickets`}
           </button>
 
           <div className="text-xs text-center text-white/80">

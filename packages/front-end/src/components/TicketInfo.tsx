@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from "react";
+import { useAccount } from "wagmi";
+import { useConnectModal } from '@rainbow-me/rainbowkit';
 import { ContractInfo, TicketData, CountdownData } from "../types";
 import { ReactComponent as CopyIcon } from "../assets/copy-icon.svg";
 import { LOTTERY_ADDRESS } from "../config/contracts";
@@ -71,6 +73,8 @@ const TicketInfo: React.FC<TicketInfoProps> = ({
     minutes: 0,
   },
 }) => {
+  const { address, isConnected } = useAccount();
+  const { openConnectModal } = useConnectModal();
   const [ticketData, setTicketData] = useState<TicketData>(initialTicketData);
   const [contractInfo, setContractInfo] = useState<ContractInfo>(initialContractInfo);
   const [countdown, setCountdown] = useState<CountdownData>(initialCountdown);
@@ -262,9 +266,9 @@ const TicketInfo: React.FC<TicketInfoProps> = ({
 
           <button
             className="bg-[#C2F970] hover:bg-[#B5EC63] w-full py-3 rounded-lg text-[#102C24] font-bold mb-2 shadow-[0_3px_0_rgba(0,0,0,1)] border-2 border-[#102C24]"
-            onClick={handleBuyTickets}
+            onClick={isConnected ? handleBuyTickets : openConnectModal}
           >
-            {`Buy ${ticketData.quantity} Tickets`}
+            {isConnected ? `Buy ${ticketData.quantity} Tickets` : 'Connect Wallet'}
           </button>
 
           <div className="text-xs text-center text-white/80">

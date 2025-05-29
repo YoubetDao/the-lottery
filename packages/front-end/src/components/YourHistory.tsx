@@ -3,7 +3,7 @@ import { ReactComponent as ChevronLeft } from "../assets/chevron-left.svg";
 import { ReactComponent as ChevronRight } from "../assets/chevron-right.svg";
 import { useYourHistory } from "../contracts/lotteryContract";
 import { UserHistory } from "../types";
-import { formatAmount } from "./AllHistory";
+import { drawnDateDisplay, formatAmount } from "../utils";
 
 export const YourHistory = () => {
   const [page, setPage] = useState<bigint>(1n);
@@ -57,13 +57,13 @@ export const YourHistory = () => {
           >
             <div className="font-medium">{item.roundId.toString()}</div>
             <div className="font-medium">
-              {new Date(Number(item.startTime) * 1000).toLocaleString()}
+              {drawnDateDisplay(item.startTime, false)}
             </div>
             <div className="font-medium">
               {item.totalTicketCount.toString()}
             </div>
             <div className="font-medium text-right">
-              {formatAmount(Number(item.prizeWon))}
+              ${formatAmount(Number(item.prizeWon))}
             </div>
           </div>
         ))}

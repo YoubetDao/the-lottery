@@ -11,8 +11,6 @@ import {
 } from "../contracts/lotteryContract";
 import { drawnDateDisplay, formatAmount } from "../utils";
 
-
-
 export const AllHistory = () => {
   const { lastRoundId } = useLastRoundId();
   const { lastEndRoundId, error, isPending } = useLastEndRoundId();
@@ -167,7 +165,7 @@ export const AllHistory = () => {
                 <div>
                   <div className="text-[#000] opacity-50 ">Prize Pot</div>
                   <div className="text-[#157433] text-[32px] font-bold">
-                    ${formatAmount(Number(rewardAmount)).toLocaleString()}
+                    ${formatAmount(Number(rewardAmount))}
                   </div>
                 </div>
                 <div>
@@ -196,7 +194,7 @@ export const AllHistory = () => {
                     {winnerUsers?.[item]?.toString().slice(0, 6)}
                   </div>
                   <div className="font-bold text-right">
-                    ${formatAmount(Number(prizeTiers?.[item])).toLocaleString()}
+                    ${formatAmount(Number(prizeTiers?.[item]))}
                   </div>
                 </div>
               ))}

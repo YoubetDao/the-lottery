@@ -31,5 +31,5 @@ export function drawnDateDisplay(
 
 export function formatAmount(amount: number, decimals: number = 17) {
   if (amount === 0) return 0;
-  return amount / Math.pow(10, decimals);
+  return (amount / Math.pow(10, decimals)).toLocaleString();
 }

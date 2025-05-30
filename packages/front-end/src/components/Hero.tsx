@@ -1,16 +1,14 @@
 import React from "react";
 import { useAccount } from "wagmi";
 import { useConnectModal } from '@rainbow-me/rainbowkit';
+import { useLastRoundId, useRoundsHistory } from "../contracts/lotteryContract";
+import { formatAmount } from "../utils/index";
 
-interface HeroProps {
-  prizeAmount?: string;
-}
-
-const Hero: React.FC<HeroProps> = ({ prizeAmount = "$765,772" }) => {
-
+const Hero: React.FC = () => {
   const { isConnected } = useAccount();
   const { openConnectModal } = useConnectModal();
-
+  const { lastRoundId } = useLastRoundId();
+  const { rewardAmount } = useRoundsHistory(BigInt(lastRoundId));
   return (
     <section id="yuzu_lottery">
       <div className="z-10 relative top-[85px] pb-8">
@@ -26,7 +24,7 @@ const Hero: React.FC<HeroProps> = ({ prizeAmount = "$765,772" }) => {
               <span className="text-[#ED8C3F]">YUZU</span> Lottery
             </div>
             <div className="text-[80px] leading-[96px] font-bold text-yuzu-green my-4">
-              {prizeAmount}
+              ${formatAmount(Number(rewardAmount || 0))}
             </div>
             <div className="mb-4 text-white font-bold text-[20px] leading-8">
               In Prize

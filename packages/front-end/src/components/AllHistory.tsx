@@ -9,38 +9,7 @@ import {
   useLastRoundId,
   useRoundsHistory,
 } from "../contracts/lotteryContract";
-
-function drawnDateDisplay(endTime: bigint | undefined) {
-  const date = new Date(Number(endTime) * 1000);
-  const monthNames = [
-    "Jan",
-    "Feb",
-    "Mar",
-    "Apr",
-    "May",
-    "Jun",
-    "Jul",
-    "Aug",
-    "Sep",
-    "Oct",
-    "Nov",
-    "Dec",
-  ];
-
-  const month = monthNames[date.getUTCMonth()];
-  const day = date.getUTCDate();
-  const hours = date.getUTCHours();
-
-  // 3. 判断 AM / PM
-  const isAM = hours < 12;
-  const amPm = isAM ? "AM" : "PM";
-  return `${day}th ${month} at ${isAM ? hours : hours - 12} ${amPm} UTC`;
-}
-
-export function formatAmount(amount: number, decimals: number = 17) {
-  if (amount === 0) return 0;
-  return amount / Math.pow(10, decimals);
-}
+import { drawnDateDisplay, formatAmount } from "../utils";
 
 export const AllHistory = () => {
   const { lastRoundId } = useLastRoundId();
@@ -196,7 +165,7 @@ export const AllHistory = () => {
                 <div>
                   <div className="text-[#000] opacity-50 ">Prize Pot</div>
                   <div className="text-[#157433] text-[32px] font-bold">
-                    ${formatAmount(Number(rewardAmount)).toLocaleString()}
+                    ${formatAmount(Number(rewardAmount))}
                   </div>
                 </div>
                 <div>
@@ -220,12 +189,12 @@ export const AllHistory = () => {
                   key={item}
                   className="grid grid-cols-3 text-[#000] text-[14px] mb-2 items-center"
                 >
-                  <div className="font-medium">{item + 1}</div>
-                  <div className="font-medium text-center">
+                  <div className="font-bold">{item + 1}</div>
+                  <div className="font-bold text-center">
                     {winnerUsers?.[item]?.toString().slice(0, 6)}
                   </div>
-                  <div className="font-medium text-right">
-                    ${formatAmount(Number(prizeTiers?.[item])).toLocaleString()}
+                  <div className="font-bold text-right">
+                    ${formatAmount(Number(prizeTiers?.[item]))}
                   </div>
                 </div>
               ))}

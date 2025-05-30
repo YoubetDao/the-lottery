@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from "react";
+import { useAccount } from "wagmi";
+import { useConnectModal } from '@rainbow-me/rainbowkit';
 import { ContractInfo, TicketData, CountdownData } from "../types";
 import { ReactComponent as CopyIcon } from "../assets/copy-icon.svg";
 import { LOTTERY_ADDRESS } from "../config/contracts";
@@ -71,6 +73,8 @@ const TicketInfo: React.FC<TicketInfoProps> = ({
     minutes: 0,
   },
 }) => {
+  const { address, isConnected } = useAccount();
+  const { openConnectModal } = useConnectModal();
   const [ticketData, setTicketData] = useState<TicketData>(initialTicketData);
   const [contractInfo, setContractInfo] = useState<ContractInfo>(initialContractInfo);
   const [countdown, setCountdown] = useState<CountdownData>(initialCountdown);
@@ -227,26 +231,30 @@ const TicketInfo: React.FC<TicketInfoProps> = ({
 
           <div className="flex justify-between gap-2">
             <button
-              className="bg-[#f39321] hover:bg-[#f39321] flex-1 py-2 rounded-lg text-[#fff6a4] font-medium"
+              className="bg-[#f39321] hover:bg-[#f39321] flex-1 py-2 rounded-lg text-[#fff6a4] font-medium disabled:opacity-50 disabled:cursor-not-allowed"
               onClick={() => handleQuantityChange(5)}
+              disabled={!isConnected}
             >
               5
             </button>
             <button
-              className="bg-[#f39321] hover:bg-[#f39321] flex-1 py-2 rounded-lg text-[#fff6a4] font-medium"
+              className="bg-[#f39321] hover:bg-[#f39321] flex-1 py-2 rounded-lg text-[#fff6a4] font-medium disabled:opacity-50 disabled:cursor-not-allowed"
               onClick={() => handleQuantityChange(10)}
+              disabled={!isConnected}
             >
               10
             </button>
             <button
-              className="bg-[#f39321] hover:bg-[#f39321] flex-1 py-2 rounded-lg text-[#fff6a4] font-medium"
+              className="bg-[#f39321] hover:bg-[#f39321] flex-1 py-2 rounded-lg text-[#fff6a4] font-medium disabled:opacity-50 disabled:cursor-not-allowed"
               onClick={() => handleQuantityChange(50)}
+              disabled={!isConnected}
             >
               50
             </button>
             <button
-              className="bg-[#f39321] hover:bg-[#f39321] flex-1 py-2 rounded-lg text-[#fff6a4] font-medium"
+              className="bg-[#f39321] hover:bg-[#f39321] flex-1 py-2 rounded-lg text-[#fff6a4] font-medium disabled:opacity-50 disabled:cursor-not-allowed"
               onClick={() => handleQuantityChange(ticketData.maxLimit)}
+              disabled={!isConnected}
             >
               MAX
             </button>
@@ -262,9 +270,9 @@ const TicketInfo: React.FC<TicketInfoProps> = ({
 
           <button
             className="bg-[#C2F970] hover:bg-[#B5EC63] w-full py-3 rounded-lg text-[#102C24] font-bold mb-2 shadow-[0_3px_0_rgba(0,0,0,1)] border-2 border-[#102C24]"
-            onClick={handleBuyTickets}
+            onClick={isConnected ? handleBuyTickets : openConnectModal}
           >
-            {`Buy ${ticketData.quantity} Tickets`}
+            {isConnected ? `Buy ${ticketData.quantity} Tickets` : 'Connect Wallet'}
           </button>
 
           <div className="text-xs text-center text-white/80">

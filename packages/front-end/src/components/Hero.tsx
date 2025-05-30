@@ -1,8 +1,12 @@
 import React from "react";
+import { useAccount } from "wagmi";
+import { useConnectModal } from '@rainbow-me/rainbowkit';
 import { useLastRoundId, useRoundsHistory } from "../contracts/lotteryContract";
 import { formatAmount } from "../utils/index";
 
 const Hero: React.FC = () => {
+  const { isConnected } = useAccount();
+  const { openConnectModal } = useConnectModal();
   const { lastRoundId } = useLastRoundId();
   const { rewardAmount } = useRoundsHistory(BigInt(lastRoundId));
   return (
@@ -25,8 +29,11 @@ const Hero: React.FC = () => {
             <div className="mb-4 text-white font-bold text-[20px] leading-8">
               In Prize
             </div>
-            <button className="bg-yuzu-green py-6 px-8 font-semibold text-black mb-8 yuzu-button-border">
-              <a href="#buy_ticket">Buy Ticket</a>
+            <button
+              className="bg-yuzu-green py-6 px-8 font-semibold text-black mb-8 yuzu-button-border"
+              onClick={isConnected ? undefined : openConnectModal}
+            >
+              {isConnected ? <a href="#buy_ticket">Buy Ticket</a> : 'Connect Wallet'}
             </button>
           </div>
           <img src={require("../assets/coin.png")} alt="yuzu coin" />

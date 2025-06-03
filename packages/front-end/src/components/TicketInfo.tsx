@@ -202,7 +202,7 @@ const TicketInfo: React.FC<TicketInfoProps> = ({
               <span className={valueStyle}>{contractInfo.nextDraw}</span>
             </div>
             <div className="flex justify-between">
-              <span className={labelStyle}>Your Ticket</span>
+              <span className={labelStyle}>Number of Tickets</span>
               <span className={valueStyle}>{contractInfo.userTickets}</span>
             </div>
           </div>

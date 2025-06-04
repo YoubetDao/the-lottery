@@ -18,6 +18,7 @@ function formatTimestampToUtcString(timestamp: bigint): string {
   const day = date.getUTCDate();
   const month = date.toLocaleString('en-US', { month: 'short', timeZone: 'UTC' }); // 'Sep'
   const hour = date.getUTCHours();
+  const minutes = date.getUTCMinutes().toString().padStart(2, '0');
   const ampm = hour >= 12 ? 'PM' : 'AM';
   const formattedHour = hour % 12 === 0 ? 12 : hour % 12;
   // Add English ordinal suffix: 1st, 2nd, 3rd, 4th...
@@ -30,7 +31,7 @@ function formatTimestampToUtcString(timestamp: bigint): string {
       default: return `${d}th`;
     }
   };
-  return `${daySuffix(day)} ${month} at ${formattedHour} ${ampm} UTC`;
+  return `${daySuffix(day)} ${month} at ${formattedHour}:${minutes} ${ampm} UTC`;
 }
 
 function getCountdownData(targetTimestamp: bigint): CountdownData {

@@ -156,8 +156,8 @@ const TicketInfo: React.FC<TicketInfoProps> = ({
 
   const handleMaxClick = () => {
     if (!balance) return;
-    const maxTickets = Number(balance) / ticketData.cost;
-    handleQuantityChange(Math.floor(maxTickets));
+    ticketData.maxLimit = Number(balance) / ticketData.cost;
+    handleQuantityChange(Math.floor(ticketData.maxLimit));
   };
 
   // Handle copy button click
@@ -238,14 +238,17 @@ const TicketInfo: React.FC<TicketInfoProps> = ({
           <div className="flex justify-between items-center mb-4">
             <input
               type="number"
-              value={ticketData.quantity}
+              value={String(ticketData.quantity)}
               onChange={(e) => {
-                const value = parseInt(e.target.value) || 0;
+                // Remove leading zeros and non-digit characters
+                let strValue = e.target.value.replace(/^0+(?=\d)/, '').replace(/[^\d]/g, '');
+                // If empty, treat as 0
+                let value = strValue === '' ? 0 : parseInt(strValue, 10);
                 const limitedValue = Math.min(value, ticketData.maxLimit);
                 handleQuantityChange(limitedValue);
               }}
               className="text-5xl font-bold text-[#2D6A4F] bg-transparent w-48 outline-none"
-              min="0"
+              min="1"
               max={ticketData.maxLimit}
             />
             <div className="text-[#E6622B] text-[20px] font-[600]">Ticket</div>

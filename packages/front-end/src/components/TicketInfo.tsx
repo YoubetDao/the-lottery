@@ -5,6 +5,7 @@ import { ContractInfo, TicketData, CountdownData } from "../types";
 import { ReactComponent as CopyIcon } from "../assets/copy-icon.svg";
 import { LOTTERY_ADDRESS } from "../config/contracts";
 import { usePointsSignature, useBuy, useRoundInfo, useUserRoundHistory } from "../contracts/lotteryContract";
+import { useYuzuBalance } from "../contracts/pointsContract";
 
 // Helper function to format address
 const formatAddress = (address: string) => {
@@ -18,6 +19,7 @@ function formatTimestampToUtcString(timestamp: bigint): string {
   const day = date.getUTCDate();
   const month = date.toLocaleString('en-US', { month: 'short', timeZone: 'UTC' }); // 'Sep'
   const hour = date.getUTCHours();
+  const minutes = date.getUTCMinutes().toString().padStart(2, '0');
   const ampm = hour >= 12 ? 'PM' : 'AM';
   const formattedHour = hour % 12 === 0 ? 12 : hour % 12;
   // Add English ordinal suffix: 1st, 2nd, 3rd, 4th...
@@ -30,7 +32,7 @@ function formatTimestampToUtcString(timestamp: bigint): string {
       default: return `${d}th`;
     }
   };
-  return `${daySuffix(day)} ${month} at ${formattedHour} ${ampm} UTC`;
+  return `${daySuffix(day)} ${month} at ${formattedHour}:${minutes} ${ampm} UTC`;
 }
 
 function getCountdownData(targetTimestamp: bigint): CountdownData {
@@ -63,7 +65,7 @@ const TicketInfo: React.FC<TicketInfoProps> = ({
     userTickets: 0,
   },
   initialTicketData = {
-    cost: 5,
+    cost: 1,
     quantity: 5,
     maxLimit: 100000,
   },
@@ -83,6 +85,7 @@ const TicketInfo: React.FC<TicketInfoProps> = ({
   const { buy, isPending: isBuyPending, hash, error: buyError } = useBuy();
   const { isOpen, startTime, endTime, isPending: isRoundInfoPending, error: roundInfoError } = useRoundInfo();
   const { roundId, totalAmountSpent, totalTicketCount, winningTicketCount, prizeWon, isPending, error } = useUserRoundHistory();
+  const { balance, isPending: isBalancePending } = useYuzuBalance();
 
   // Only update contractInfo when endTime changes
   useEffect(() => {
@@ -136,6 +139,12 @@ const TicketInfo: React.FC<TicketInfoProps> = ({
     } catch (error) {
       console.error("handleBuyTickets error:", error);
     }
+  };
+
+  const handleMaxClick = () => {
+    if (!balance) return;
+    const maxTickets = Number(balance) / ticketData.cost;
+    handleQuantityChange(Math.floor(maxTickets));
   };
 
   // Handle copy button click
@@ -202,7 +211,7 @@ const TicketInfo: React.FC<TicketInfoProps> = ({
               <span className={valueStyle}>{contractInfo.nextDraw}</span>
             </div>
             <div className="flex justify-between">
-              <span className={labelStyle}>Your Ticket</span>
+              <span className={labelStyle}>Number of Tickets</span>
               <span className={valueStyle}>{contractInfo.userTickets}</span>
             </div>
           </div>
@@ -253,8 +262,8 @@ const TicketInfo: React.FC<TicketInfoProps> = ({
             </button>
             <button
               className="bg-[#f39321] hover:bg-[#f39321] flex-1 py-2 rounded-lg text-[#fff6a4] font-medium disabled:opacity-50 disabled:cursor-not-allowed"
-              onClick={() => handleQuantityChange(ticketData.maxLimit)}
-              disabled={!isConnected}
+              onClick={handleMaxClick}
+              disabled={!isConnected || isBalancePending}
             >
               MAX
             </button>
@@ -265,14 +274,25 @@ const TicketInfo: React.FC<TicketInfoProps> = ({
         <div className="bg-[#157433] rounded-b-[16px] px-8 py-6 border-x-[2px] border-t-[1px] border-[#102C24] shadow-[0_4px_0_rgba(0,0,0,1)]">
           <div className="flex justify-between mb-4 text-white">
             <span>Cost</span>
-            <span>{ticketData.quantity} YUZU</span>
+            <span>{ticketData.quantity * ticketData.cost} YUZU</span>
           </div>
 
           <button
-            className="bg-[#C2F970] hover:bg-[#B5EC63] w-full py-3 rounded-lg text-[#102C24] font-bold mb-2 shadow-[0_3px_0_rgba(0,0,0,1)] border-2 border-[#102C24]"
-            onClick={isConnected ? handleBuyTickets : openConnectModal}
+            className="bg-[#C2F970] hover:bg-[#B5EC63] w-full py-3 rounded-lg text-[#102C24] font-bold mb-2 shadow-[0_3px_0_rgba(0,0,0,1)] border-2 border-[#102C24] disabled:opacity-50 disabled:cursor-not-allowed"
+            onClick={
+              !isConnected
+                ? openConnectModal
+                : isBuyPending
+                  ? undefined
+                  : handleBuyTickets
+            }
+            disabled={isBuyPending || !isConnected}
           >
-            {isConnected ? `Buy ${ticketData.quantity} Tickets` : 'Connect Wallet'}
+            {!isConnected
+              ? 'Connect Wallet'
+              : isBuyPending
+                ? 'Confirm in wallet...'
+                : `Buy ${ticketData.quantity} Tickets`}
           </button>
 
           <div className="text-xs text-center text-white/80">

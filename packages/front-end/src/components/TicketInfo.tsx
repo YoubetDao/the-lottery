@@ -84,7 +84,7 @@ const TicketInfo: React.FC<TicketInfoProps> = ({
   const { signForBuy, isLoading: isSignLoading } = usePointsSignature();
   const { buy, isPending: isBuyPending, hash, error: buyError } = useBuy();
   const { isOpen, startTime, endTime, isPending: isRoundInfoPending, error: roundInfoError } = useRoundInfo();
-  const { roundId, totalAmountSpent, totalTicketCount, winningTicketCount, prizeWon, isPending, error } = useUserRoundHistory();
+  const { roundId, totalAmountSpent, totalTicketCount, winningTicketCount, prizeWon, isPending, error, refetch } = useUserRoundHistory();
   const { balance, isPending: isBalancePending } = useYuzuBalance();
 
   // Only update contractInfo when endTime changes
@@ -136,6 +136,19 @@ const TicketInfo: React.FC<TicketInfoProps> = ({
         signature,
         deadline,
       });
+      // Log the transaction hash
+      console.log("Buy transaction hash:", txHash);
+      // After purchase, manually refetch user round history
+      const result = await refetch();
+      // Log the user's ticket number after refetch
+      console.log("Ticket number after refetch:", result?.data?.totalTicketCount);
+      // If totalTicketCount exists in the response, update contractInfo.userTickets
+      if (result?.data?.totalTicketCount) {
+        setContractInfo((prev) => ({
+          ...prev,
+          userTickets: result.data.totalTicketCount,
+        }));
+      }
     } catch (error) {
       console.error("handleBuyTickets error:", error);
     }

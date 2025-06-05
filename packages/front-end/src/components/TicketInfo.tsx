@@ -5,6 +5,7 @@ import { ContractInfo, TicketData, CountdownData } from "../types";
 import { ReactComponent as CopyIcon } from "../assets/copy-icon.svg";
 import { LOTTERY_ADDRESS } from "../config/contracts";
 import { usePointsSignature, useBuy, useRoundInfo, useUserRoundHistory } from "../contracts/lotteryContract";
+import { useYuzuBalance } from "../contracts/pointsContract";
 
 // Helper function to format address
 const formatAddress = (address: string) => {
@@ -64,7 +65,7 @@ const TicketInfo: React.FC<TicketInfoProps> = ({
     userTickets: 0,
   },
   initialTicketData = {
-    cost: 5,
+    cost: 1,
     quantity: 5,
     maxLimit: 100000,
   },
@@ -84,6 +85,7 @@ const TicketInfo: React.FC<TicketInfoProps> = ({
   const { buy, isPending: isBuyPending, hash, error: buyError } = useBuy();
   const { isOpen, startTime, endTime, isPending: isRoundInfoPending, error: roundInfoError } = useRoundInfo();
   const { roundId, totalAmountSpent, totalTicketCount, winningTicketCount, prizeWon, isPending, error } = useUserRoundHistory();
+  const { balance, isPending: isBalancePending } = useYuzuBalance();
 
   // Only update contractInfo when endTime changes
   useEffect(() => {
@@ -137,6 +139,12 @@ const TicketInfo: React.FC<TicketInfoProps> = ({
     } catch (error) {
       console.error("handleBuyTickets error:", error);
     }
+  };
+
+  const handleMaxClick = () => {
+    if (!balance) return;
+    const maxTickets = Number(balance) / ticketData.cost;
+    handleQuantityChange(Math.floor(maxTickets));
   };
 
   // Handle copy button click
@@ -254,8 +262,8 @@ const TicketInfo: React.FC<TicketInfoProps> = ({
             </button>
             <button
               className="bg-[#f39321] hover:bg-[#f39321] flex-1 py-2 rounded-lg text-[#fff6a4] font-medium disabled:opacity-50 disabled:cursor-not-allowed"
-              onClick={() => handleQuantityChange(ticketData.maxLimit)}
-              disabled={!isConnected}
+              onClick={handleMaxClick}
+              disabled={!isConnected || isBalancePending}
             >
               MAX
             </button>
@@ -266,7 +274,7 @@ const TicketInfo: React.FC<TicketInfoProps> = ({
         <div className="bg-[#157433] rounded-b-[16px] px-8 py-6 border-x-[2px] border-t-[1px] border-[#102C24] shadow-[0_4px_0_rgba(0,0,0,1)]">
           <div className="flex justify-between mb-4 text-white">
             <span>Cost</span>
-            <span>{ticketData.quantity} YUZU</span>
+            <span>{ticketData.quantity * ticketData.cost} YUZU</span>
           </div>
 
           <button

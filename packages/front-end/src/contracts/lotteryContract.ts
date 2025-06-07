@@ -216,7 +216,7 @@ export function useUserRoundHistory() {
     error: roundIdError,
   } = useLastRoundId();
 
-  const { data, isPending, error } = (useReadContract as any)({
+  const { data, isPending, error, refetch } = (useReadContract as any)({
     address: LOTTERY_ADDRESS,
     abi: lotteryAbi,
     functionName: "getUserRoundHistory",
@@ -233,6 +233,7 @@ export function useUserRoundHistory() {
     prizeWon: data?.prizeWon,
     isPending,
     error,
+    refetch,
   };
 }
 

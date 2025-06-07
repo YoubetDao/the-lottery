@@ -84,7 +84,7 @@ const TicketInfo: React.FC<TicketInfoProps> = ({
   const { signForBuy, isLoading: isSignLoading } = usePointsSignature();
   const { buy, isPending: isBuyPending, hash, error: buyError } = useBuy();
   const { isOpen, startTime, endTime, isPending: isRoundInfoPending, error: roundInfoError } = useRoundInfo();
-  const { roundId, totalAmountSpent, totalTicketCount, winningTicketCount, prizeWon, isPending, error } = useUserRoundHistory();
+  const { roundId, totalAmountSpent, totalTicketCount, winningTicketCount, prizeWon, isPending, error, refetch } = useUserRoundHistory();
   const { balance, isPending: isBalancePending } = useYuzuBalance();
 
   // Only update contractInfo when endTime changes
@@ -136,6 +136,19 @@ const TicketInfo: React.FC<TicketInfoProps> = ({
         signature,
         deadline,
       });
+      // Log the transaction hash
+      console.log("Buy transaction hash:", txHash);
+      // After purchase, manually refetch user round history
+      const result = await refetch();
+      // Log the user's ticket number after refetch
+      console.log("Ticket number after refetch:", result?.data?.totalTicketCount);
+      // If totalTicketCount exists in the response, update contractInfo.userTickets
+      if (result?.data?.totalTicketCount) {
+        setContractInfo((prev) => ({
+          ...prev,
+          userTickets: result.data.totalTicketCount,
+        }));
+      }
     } catch (error) {
       console.error("handleBuyTickets error:", error);
     }
@@ -143,8 +156,8 @@ const TicketInfo: React.FC<TicketInfoProps> = ({
 
   const handleMaxClick = () => {
     if (!balance) return;
-    const maxTickets = Number(balance) / ticketData.cost;
-    handleQuantityChange(Math.floor(maxTickets));
+    ticketData.maxLimit = Math.min(1000, Math.floor(Number(balance) / ticketData.cost));
+    handleQuantityChange(ticketData.maxLimit);
   };
 
   // Handle copy button click
@@ -225,14 +238,17 @@ const TicketInfo: React.FC<TicketInfoProps> = ({
           <div className="flex justify-between items-center mb-4">
             <input
               type="number"
-              value={ticketData.quantity}
+              value={String(ticketData.quantity)}
               onChange={(e) => {
-                const value = parseInt(e.target.value) || 0;
+                // Remove leading zeros and non-digit characters
+                let strValue = e.target.value.replace(/^0+(?=\d)/, '').replace(/[^\d]/g, '');
+                // If empty, treat as 0
+                let value = strValue === '' ? 0 : parseInt(strValue, 10);
                 const limitedValue = Math.min(value, ticketData.maxLimit);
                 handleQuantityChange(limitedValue);
               }}
               className="text-5xl font-bold text-[#2D6A4F] bg-transparent w-48 outline-none"
-              min="0"
+              min="1"
               max={ticketData.maxLimit}
             />
             <div className="text-[#E6622B] text-[20px] font-[600]">Ticket</div>

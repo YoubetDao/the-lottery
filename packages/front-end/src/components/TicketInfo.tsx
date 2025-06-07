@@ -156,8 +156,8 @@ const TicketInfo: React.FC<TicketInfoProps> = ({
 
   const handleMaxClick = () => {
     if (!balance) return;
-    ticketData.maxLimit = Number(balance) / ticketData.cost;
-    handleQuantityChange(Math.floor(ticketData.maxLimit));
+    ticketData.maxLimit = Math.min(1000, Math.floor(Number(balance) / ticketData.cost));
+    handleQuantityChange(ticketData.maxLimit);
   };
 
   // Handle copy button click

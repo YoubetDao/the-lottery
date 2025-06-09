@@ -6,6 +6,7 @@ import { ReactComponent as CopyIcon } from "../assets/copy-icon.svg";
 import { LOTTERY_ADDRESS } from "../config/contracts";
 import { usePointsSignature, useBuy, useRoundInfo, useUserRoundHistory } from "../contracts/lotteryContract";
 import { useYuzuBalance } from "../contracts/pointsContract";
+import { useGlobalBanner } from "./GlobalBannerContext";
 
 // Helper function to format address
 const formatAddress = (address: string) => {
@@ -86,6 +87,7 @@ const TicketInfo: React.FC<TicketInfoProps> = ({
   const { isOpen, startTime, endTime, isPending: isRoundInfoPending, error: roundInfoError } = useRoundInfo();
   const { roundId, totalAmountSpent, totalTicketCount, winningTicketCount, prizeWon, isPending: isUserRoundHistoryPending, error: userRoundHistoryError, refetch: refetchUserRoundHistory } = useUserRoundHistory();
   const { balance, isPending: isBalancePending, refetch: refetchBalance } = useYuzuBalance();
+  const { showBanner } = useGlobalBanner();
 
   // Only update contractInfo when endTime changes
   useEffect(() => {
@@ -158,8 +160,10 @@ const TicketInfo: React.FC<TicketInfoProps> = ({
           userTickets: result.data.totalTicketCount,
         }));
       }
+      showBanner({ type: "success", message: "Ticket purchased successfully." });
     } catch (error) {
       console.error("handleBuyTickets error:", error);
+      showBanner({ type: "error", message: "Ticket purchase failed, please try again." });
     }
   };
 

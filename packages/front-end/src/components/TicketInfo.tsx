@@ -341,13 +341,7 @@ const TicketInfo: React.FC<TicketInfoProps> = ({
           </button>
 
           <div className="text-xs text-center text-white/80">
-            {buyError ? (
-              <span className="text-red-400">Purchase failed</span>
-            ) : hash ? (
-              <span className="text-green-400">buy successful</span>
-            ) : (
-              "Buying ticket will cost YUZU, and all purchases are final"
-            )}
+            {"Buying ticket will cost YUZU, and all purchases are final"}
           </div>
         </div>
       </div>

@@ -5,7 +5,7 @@ import { POINTS_ADDRESS } from "../config/contracts";
 export const useYuzuBalance = () => {
   const { address } = useAccount();
 
-  const { data, isPending, error } = (useReadContract as any)({
+  const { data, isPending, error, refetch } = (useReadContract as any)({
     address: POINTS_ADDRESS as `0x${string}`,
     abi: PointsABI,
     functionName: "balances",
@@ -19,5 +19,6 @@ export const useYuzuBalance = () => {
     balance: data,
     isPending,
     error,
+    refetch,
   };
 };

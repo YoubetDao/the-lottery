@@ -6,6 +6,7 @@ import { ReactComponent as CopyIcon } from "../assets/copy-icon.svg";
 import { LOTTERY_ADDRESS } from "../config/contracts";
 import { usePointsSignature, useBuy, useRoundInfo, useUserRoundHistory } from "../contracts/lotteryContract";
 import { useYuzuBalance } from "../contracts/pointsContract";
+import { useGlobalBanner } from "./GlobalBannerContext";
 
 // Helper function to format address
 const formatAddress = (address: string) => {
@@ -84,8 +85,9 @@ const TicketInfo: React.FC<TicketInfoProps> = ({
   const { signForBuy, isLoading: isSignLoading } = usePointsSignature();
   const { buy, isPending: isBuyPending, hash, error: buyError } = useBuy();
   const { isOpen, startTime, endTime, isPending: isRoundInfoPending, error: roundInfoError } = useRoundInfo();
-  const { roundId, totalAmountSpent, totalTicketCount, winningTicketCount, prizeWon, isPending, error, refetch } = useUserRoundHistory();
-  const { balance, isPending: isBalancePending } = useYuzuBalance();
+  const { roundId, totalAmountSpent, totalTicketCount, winningTicketCount, prizeWon, isPending: isUserRoundHistoryPending, error: userRoundHistoryError, refetch: refetchUserRoundHistory } = useUserRoundHistory();
+  const { balance, isPending: isBalancePending, refetch: refetchBalance } = useYuzuBalance();
+  const { showBanner } = useGlobalBanner();
 
   // Only update contractInfo when endTime changes
   useEffect(() => {
@@ -112,17 +114,22 @@ const TicketInfo: React.FC<TicketInfoProps> = ({
   useEffect(() => {
     if (process.env.NODE_ENV !== 'production') return;
     if (!endTime) return;
+
+    // 立即刷新一次
+    setCountdown(getCountdownData(endTime));
+
     const timer = setInterval(() => {
       setCountdown(getCountdownData(endTime));
     }, 1000);
+
     return () => clearInterval(timer);
   }, [endTime]);
 
   const handleQuantityChange = (quantity: number) => {
-    setTicketData({
-      ...ticketData,
-      quantity: quantity,
-    });
+    setTicketData((prev) => ({
+      ...prev,
+      quantity,
+    }));
   };
 
   const handleBuyTickets = async () => {
@@ -139,25 +146,47 @@ const TicketInfo: React.FC<TicketInfoProps> = ({
       // Log the transaction hash
       console.log("Buy transaction hash:", txHash);
       // After purchase, manually refetch user round history
-      const result = await refetch();
-      // Log the user's ticket number after refetch
-      console.log("Ticket number after refetch:", result?.data?.totalTicketCount);
+      const result = await refetchUserRoundHistory();
       // If totalTicketCount exists in the response, update contractInfo.userTickets
       if (result?.data?.totalTicketCount) {
+        // Log the user's ticket number after refetch
+        console.log(
+          "Number of Tickets after refetch:",
+          result?.data?.totalTicketCount
+        );
+
         setContractInfo((prev) => ({
           ...prev,
           userTickets: result.data.totalTicketCount,
         }));
       }
+      showBanner({ type: "success", message: "Ticket purchased successfully." });
     } catch (error) {
       console.error("handleBuyTickets error:", error);
+      showBanner({ type: "error", message: "Ticket purchase failed, please try again." });
     }
   };
 
-  const handleMaxClick = () => {
-    if (!balance) return;
-    ticketData.maxLimit = Math.min(1000, Math.floor(Number(balance) / ticketData.cost));
-    handleQuantityChange(ticketData.maxLimit);
+  const handleMaxClick = async () => {
+    try {
+      const result = await refetchBalance();
+      if (result?.data) {
+        console.log("Balance after refetch:", result.data);
+        setTicketData((prev) => {
+          const max = Math.min(
+            1000,
+            Math.floor(Number(result.data) / prev.cost)
+          );
+          return {
+            ...prev,
+            maxLimit: max,
+            quantity: max,
+          };
+        });
+      }
+    } catch (error) {
+      console.error("Error fetching balance:", error);
+    }
   };
 
   // Handle copy button click
@@ -312,13 +341,7 @@ const TicketInfo: React.FC<TicketInfoProps> = ({
           </button>
 
           <div className="text-xs text-center text-white/80">
-            {buyError ? (
-              <span className="text-red-400">Purchase failed</span>
-            ) : hash ? (
-              <span className="text-green-400">buy successful</span>
-            ) : (
-              "Buying ticket will cost YUZU, and all purchases are final"
-            )}
+            {"Buying ticket will cost YUZU, and all purchases are final"}
           </div>
         </div>
       </div>

@@ -10,6 +10,7 @@ import { eduChain, eduTestnet, projectId } from "./config";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import "@rainbow-me/rainbowkit/styles.css";
 import Bowser from 'bowser';
+import { GlobalBannerProvider } from "./components/GlobalBannerContext";
 
 
 export const config = getDefaultConfig({
@@ -73,61 +74,63 @@ const App: React.FC = () => {
     <WagmiProvider config={config}>
       <QueryClientProvider client={queryClient}>
         <RainbowKitProvider>
-          <div className="min-h-screen bg-yuzu-dark-green relative">
-            {showWarning && (
-              <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
-                <div className="bg-white rounded-lg p-6 max-w-sm w-full">
-                  <h2 className="text-xl font-bold mb-4 text-gray-800">{warningContent.title}</h2>
-                  <p className="text-gray-600 mb-6">
-                    {warningContent.message}
-                  </p>
-                  <button
-                    onClick={() => setShowWarning(false)}
-                    className="w-full bg-[#C2F970] hover:bg-[#B5EC63] text-[#102C24] font-bold py-2 px-4 rounded-lg shadow-[0_3px_0_rgba(0,0,0,1)] border-2 border-[#102C24]"
-                  >
-                    {warningContent.buttonText}
-                  </button>
+          <GlobalBannerProvider>
+            <div className="min-h-screen bg-yuzu-dark-green relative">
+              {showWarning && (
+                <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+                  <div className="bg-white rounded-lg p-6 max-w-sm w-full">
+                    <h2 className="text-xl font-bold mb-4 text-gray-800">{warningContent.title}</h2>
+                    <p className="text-gray-600 mb-6">
+                      {warningContent.message}
+                    </p>
+                    <button
+                      onClick={() => setShowWarning(false)}
+                      className="w-full bg-[#C2F970] hover:bg-[#B5EC63] text-[#102C24] font-bold py-2 px-4 rounded-lg shadow-[0_3px_0_rgba(0,0,0,1)] border-2 border-[#102C24]"
+                    >
+                      {warningContent.buttonText}
+                    </button>
+                  </div>
+                </div>
+              )}
+              <div className="bg-decorated  pb-[220px] bg-[#15372D]">
+                <Navbar />
+                <Hero />
+              </div>
+
+              {/* 弧线SVG */}
+              <div className="w-full h-[40px] relative overflow-hidden bg-[#15372D]">
+                <svg
+                  className="absolute bottom-0 w-full"
+                  height="40"
+                  width="100%"
+                  viewBox="0 0 1200 40"
+                  preserveAspectRatio="none"
+                >
+                  <path d="M0,0 Q600,80 1200,0 L1200,40 L0,40 Z" fill="#91C363" />
+                </svg>
+              </div>
+
+              <div className="relative">
+                <div
+                  className="absolute inset-0"
+                  style={{
+                    background:
+                      "linear-gradient(180deg, #91C363 0%, #C2C7FB 100%)",
+                  }}
+                />
+                <div className="w-[1006px] m-auto z-10 relative">
+                  <TicketInfo />
+                  <DrawHistory />
+                  <HowToPlay />
                 </div>
               </div>
-            )}
-            <div className="bg-decorated  pb-[220px] bg-[#15372D]">
-              <Navbar />
-              <Hero />
-            </div>
-
-            {/* 弧线SVG */}
-            <div className="w-full h-[40px] relative overflow-hidden bg-[#15372D]">
-              <svg
-                className="absolute bottom-0 w-full"
-                height="40"
-                width="100%"
-                viewBox="0 0 1200 40"
-                preserveAspectRatio="none"
-              >
-                <path d="M0,0 Q600,80 1200,0 L1200,40 L0,40 Z" fill="#91C363" />
-              </svg>
-            </div>
-
-            <div className="relative">
-              <div
-                className="absolute inset-0"
-                style={{
-                  background:
-                    "linear-gradient(180deg, #91C363 0%, #C2C7FB 100%)",
-                }}
+              <img
+                src={require("./assets/flower-bottom.png")}
+                alt=""
+                className="absolute bottom-[188px] left-1/2 transform -translate-x-1/2"
               />
-              <div className="w-[1006px] m-auto z-10 relative">
-                <TicketInfo />
-                <DrawHistory />
-                <HowToPlay />
-              </div>
             </div>
-            <img
-              src={require("./assets/flower-bottom.png")}
-              alt=""
-              className="absolute bottom-[188px] left-1/2 transform -translate-x-1/2"
-            />
-          </div>
+          </GlobalBannerProvider>
         </RainbowKitProvider>
       </QueryClientProvider>
     </WagmiProvider>

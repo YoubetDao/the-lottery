@@ -1,6 +1,6 @@
-import { useReadContract, useAccount, useChainId } from "wagmi";
+import { useReadContract, useAccount } from "wagmi";
 import { PointsABI } from "../abi/Points";
-import { POINTS_ADDRESS } from "../config/contracts";
+import { POINTS_ADDRESS } from "../config";
 
 export const useYuzuBalance = () => {
   const { address } = useAccount();

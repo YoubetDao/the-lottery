@@ -6,23 +6,22 @@ import DrawHistory from "./components/DrawHistory";
 import HowToPlay from "./components/HowToPlay";
 import { WagmiProvider } from "wagmi";
 import { getDefaultConfig, RainbowKitProvider } from "@rainbow-me/rainbowkit";
-import { eduChain, eduTestnet, projectId } from "./config";
+import { currentChain, projectId } from "./config";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import "@rainbow-me/rainbowkit/styles.css";
-import Bowser from 'bowser';
+import Bowser from "bowser";
 import { GlobalBannerProvider } from "./components/GlobalBannerContext";
-
 
 export const config = getDefaultConfig({
   appName: "Yuzu Lottery",
   projectId,
-  chains: [eduTestnet],
+  chains: [currentChain],
 });
 
 const App: React.FC = () => {
   const queryClient = useMemo(() => new QueryClient({}), []);
   const [showWarning, setShowWarning] = useState(false);
-  const [warningType, setWarningType] = useState<'mobile' | 'narrow'>('mobile');
+  const [warningType, setWarningType] = useState<"mobile" | "narrow">("mobile");
 
   useEffect(() => {
     const browser = Bowser.getParser(window.navigator.userAgent);
@@ -30,10 +29,10 @@ const App: React.FC = () => {
     const isNarrowScreen = window.innerWidth < 1024;
 
     if (isMobile) {
-      setWarningType('mobile');
+      setWarningType("mobile");
       setShowWarning(true);
     } else if (isNarrowScreen) {
-      setWarningType('narrow');
+      setWarningType("narrow");
       setShowWarning(true);
     }
 
@@ -43,27 +42,29 @@ const App: React.FC = () => {
       if (window.innerWidth >= 1024) {
         setShowWarning(false);
       } else if (window.innerWidth < 1024) {
-        setWarningType('narrow');
+        setWarningType("narrow");
         setShowWarning(true);
       }
     };
 
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
   }, []);
 
   const getWarningContent = () => {
-    if (warningType === 'mobile') {
+    if (warningType === "mobile") {
       return {
         title: "Mobile Device Detected",
-        message: "For the best experience, we recommend using a desktop browser to access Yuzu Lottery.",
-        buttonText: "Continue Anyway"
+        message:
+          "For the best experience, we recommend using a desktop browser to access Yuzu Lottery.",
+        buttonText: "Continue Anyway",
       };
     } else {
       return {
         title: "Browser Window Too Narrow",
-        message: "Please expand your browser window to at least 1024px wide for the best experience.",
-        buttonText: "I Understand"
+        message:
+          "Please expand your browser window to at least 1024px wide for the best experience.",
+        buttonText: "I Understand",
       };
     }
   };
@@ -79,7 +80,9 @@ const App: React.FC = () => {
               {showWarning && (
                 <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
                   <div className="bg-white rounded-lg p-6 max-w-sm w-full">
-                    <h2 className="text-xl font-bold mb-4 text-gray-800">{warningContent.title}</h2>
+                    <h2 className="text-xl font-bold mb-4 text-gray-800">
+                      {warningContent.title}
+                    </h2>
                     <p className="text-gray-600 mb-6">
                       {warningContent.message}
                     </p>
@@ -106,7 +109,10 @@ const App: React.FC = () => {
                   viewBox="0 0 1200 40"
                   preserveAspectRatio="none"
                 >
-                  <path d="M0,0 Q600,80 1200,0 L1200,40 L0,40 Z" fill="#91C363" />
+                  <path
+                    d="M0,0 Q600,80 1200,0 L1200,40 L0,40 Z"
+                    fill="#91C363"
+                  />
                 </svg>
               </div>
 

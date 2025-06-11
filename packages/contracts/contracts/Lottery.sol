@@ -7,27 +7,7 @@ import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/math/Math.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
 import {SignatureChecker} from "@openzeppelin/contracts/utils/cryptography/SignatureChecker.sol";
-
-// YuzuPoints interface
-interface IPoints {
-    function nonces(bytes32 hashHolderSpender) external view returns (uint256);
-
-    function consume(
-        address holder,
-        uint256 amount,
-        bytes32 consumeReasonCode,
-        uint256 deadline,
-        bytes calldata signature
-    ) external;
-
-    function deposit(
-        address holder,
-        uint256 amount,
-        bytes32 depositReasonCode
-    ) external;
-
-    function balances(address user) external view returns (uint256);
-}
+import "./IPoints.sol";
 
 contract Lottery is LotteryDataLayout, ILottery, Ownable {
     using Strings for uint256;

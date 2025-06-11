@@ -6,7 +6,7 @@ import {
   useChainId,
 } from "wagmi";
 import { ILotteryABI, ILotteryABI as lotteryAbi } from "../abi/ILottery";
-import { LOTTERY_ADDRESS, POINTS_ADDRESS } from "../config/contracts";
+import { LOTTERY_ADDRESS, POINTS_ADDRESS } from "../config";
 import { useEffect } from "react";
 
 export function useLastRoundId() {
@@ -56,13 +56,11 @@ export function useRoundInfo() {
   };
 }
 
-export function useGenerateSigParam(holder: `0x${string}`, roundId: number | bigint) {
-
-  const {
-    data,
-    isPending,
-    error,
-  } = (useReadContract as any)({
+export function useGenerateSigParam(
+  holder: `0x${string}`,
+  roundId: number | bigint
+) {
+  const { data, isPending, error } = (useReadContract as any)({
     address: LOTTERY_ADDRESS as `0x${string}`,
     abi: lotteryAbi,
     functionName: "generateSigParam",
@@ -101,7 +99,6 @@ export function useBuy() {
     signature: `0x${string}`;
     deadline: bigint | number;
   }) => {
-
     if (roundId == null || amount == null || !signature || deadline == null) {
       throw new Error("Missing required parameters");
     }
@@ -132,7 +129,11 @@ export function usePointsSignature() {
   const { signTypedDataAsync } = useSignTypedData();
 
   // 获取最新轮次ID
-  const { lastRoundId, isPending: isRoundIdLoading, error: roundIdError } = useLastRoundId()
+  const {
+    lastRoundId,
+    isPending: isRoundIdLoading,
+    error: roundIdError,
+  } = useLastRoundId();
 
   // 获取签名参数
   const {
@@ -142,17 +143,17 @@ export function usePointsSignature() {
     error: paramError,
   } = useGenerateSigParam(address as `0x${string}`, lastRoundId);
 
-
   /**
    * 生成购买彩票所需的签名
    */
   async function signForBuy(amount: bigint) {
-    if (!chainId) throw new Error('chainId not found')
-    if (!address) throw new Error('wallet not connected')
-    if (isRoundIdLoading) throw new Error('roundId not ready')
-    if (lastRoundId < -1) throw new Error('invalid roundId')
-    if (lastRoundId === -1) throw new Error("No round is open now")
-    if (!consumeReasonCode || nonce === undefined) throw new Error('signature params not ready')
+    if (!chainId) throw new Error("chainId not found");
+    if (!address) throw new Error("wallet not connected");
+    if (isRoundIdLoading) throw new Error("roundId not ready");
+    if (lastRoundId < -1) throw new Error("invalid roundId");
+    if (lastRoundId === -1) throw new Error("No round is open now");
+    if (!consumeReasonCode || nonce === undefined)
+      throw new Error("signature params not ready");
 
     const deadline = BigInt(Math.floor(Date.now() / 1000) + 3600); // 1小时后过期
 
@@ -201,14 +202,13 @@ export function usePointsSignature() {
     signForBuy,
     isLoading: isRoundIdLoading || isParamLoading,
     roundId: lastRoundId,
-    error: roundIdError || paramError
-  }
+    error: roundIdError || paramError,
+  };
 }
 
 // Hook to get user round history
 export function useUserRoundHistory() {
-
-  const { address: walletAddress} = useAccount()
+  const { address: walletAddress } = useAccount();
 
   const {
     lastRoundId: roundId,

@@ -1,8 +1,16 @@
 // import { WagmiAdapter } from "@reown/appkit-adapter-wagmi";
 
-export const projectId = "842497ffbfc8c1a13975988f4508fcfa";
+export const projectId =
+  process.env.REACT_APP_PROJECT_ID || "842497ffbfc8c1a13975988f4508fcfa";
 
-export const eduTestnet = {
+export const LOTTERY_ADDRESS =
+  process.env.REACT_APP_LOTTERY_ADDRESS ||
+  "0x2AB4644281eEDE3CD8Ec1fCA009D75ae59eDA33c";
+export const POINTS_ADDRESS =
+  process.env.REACT_APP_POINTS_ADDRESS ||
+  "0x7cC7646D0896e5d50c6A62ad3d29a51989E9d1f7";
+
+const eduTestnet = {
   id: 656476,
   name: "EduChain-Testnet",
   nativeCurrency: {
@@ -31,3 +39,6 @@ export const eduChain = {
     },
   },
 };
+
+export const currentChain =
+  process.env.REACT_APP_ENV === "production" ? eduChain : eduTestnet;

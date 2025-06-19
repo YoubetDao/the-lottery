@@ -1,6 +1,8 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useConnectModal, useAccountModal } from "@rainbow-me/rainbowkit";
 import { useAccount } from "wagmi";
+import { ReactComponent as CopyIcon } from "../assets/copy-icon.svg";
+import { ReactComponent as CloseIcon } from "../assets/close.svg";
 
 interface NavbarProps {}
 
@@ -8,6 +10,25 @@ const Navbar: React.FC<NavbarProps> = () => {
   const { isConnected, address } = useAccount();
   const { openAccountModal } = useAccountModal();
   const { openConnectModal } = useConnectModal();
+
+  const [dropTrxInfo, setDropTrxInfo] = useState<string | null>(null);
+  const [copied, setCopied] = useState(false);
+
+  //获取中奖列表
+  const fetchPrizeList = async () => {
+    const res = await fetch(
+      "https://gist.githubusercontent.com/greenbookwebb/e44f4e7ab3513c09b68930e09a441994/raw/gistfile1.json"
+    );
+    const data: Record<string, string> = await res.json();
+
+    setDropTrxInfo(data[address || ""]);
+  };
+
+  useEffect(() => {
+    fetchPrizeList();
+  }, []);
+
+  console.log("dropTrxInfo", dropTrxInfo);
 
   return (
     <>
@@ -57,30 +78,56 @@ const Navbar: React.FC<NavbarProps> = () => {
           </div>
         </div>
       </nav>
-      <div className="bg-[#FFD02C] yuzu-card-border mx-auto mb-4 max-w-5xl px-8 py-4 decorated-box">
-        <div className="flex justify-between items-center decorated-div">
-          <div className="flex gap-6">
-            <img
-              src={require("../assets/playwin-logo.png")}
-              alt="playwin-logo"
-            />
-            <div>
-              <div className="bg-[#F05A28] text-white px-4 py-2 rounded-[100px] font-bold">
-                Congrats! Prize Won
-              </div>
-              <div className="text-[#157433] font-bold text-2xl mt-3">
-                50,000 EDU
+      {dropTrxInfo && (
+        <div className="bg-[#FFD02C] yuzu-card-border mx-auto mb-4 max-w-5xl px-8 py-4 decorated-box">
+          <div className="flex justify-between items-center decorated-div">
+            <div className="flex gap-6">
+              <img
+                src={require("../assets/playwin-logo.png")}
+                alt="playwin-logo"
+              />
+              <div>
+                <div className="bg-[#F05A28] text-white px-4 py-2 rounded-[100px] font-bold">
+                  Congrats! Prize Won
+                </div>
+                <div className="text-[#157433] font-bold text-2xl mt-3">
+                  50,000 EDU
+                </div>
               </div>
             </div>
+
+            <div className="text-[16px] font-bold flex gap-8 items-center">
+              <div className="flex gap-1 items-center">
+                <span className="text-[#102C24] ">Transaction Hash</span>
+                <div className="flex gap-1 items-center">
+                  <span className="text-[#008C50] ">
+                    {`${dropTrxInfo.substring(0, 12)}...`}
+                  </span>
+                  <CopyIcon
+                    className="cursor-pointer"
+                    onClick={() => {
+                      navigator.clipboard.writeText(dropTrxInfo);
+                      setCopied(true);
+                      setTimeout(() => {
+                        setCopied(false);
+                      }, 3000);
+                    }}
+                  />
+                  {copied && (
+                    <span className="ml-2 text-xs text-green-600">Copied!</span>
+                  )}
+                </div>
+              </div>
+
+              <CloseIcon
+                onClick={() => {
+                  setDropTrxInfo(null);
+                }}
+              />
+            </div>
           </div>
-          <button
-            className="bg-yuzu-green p-6 font-bold text-black yuzu-button-border !rounded-lg"
-            onClick={() => console.log("claim Prize clicked")}
-          >
-            Claim Prize
-          </button>
         </div>
-      </div>
+      )}
     </>
   );
 };

@@ -8,8 +8,5 @@
   },
   "keywords": [],
   "author": "",
-  "license": "ISC",
-  "devDependencies": {
-    "solidity-coverage": "^0.8.14"
-  }
+  "license": "ISC"
 }

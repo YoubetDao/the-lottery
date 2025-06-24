@@ -6,12 +6,18 @@ import { ReactComponent as CloseIcon } from "../assets/close.svg";
 
 interface NavbarProps {}
 
+interface DropTrxInfo {
+  asset: string;
+  amount: string;
+  txHash: string;
+}
+
 const Navbar: React.FC<NavbarProps> = () => {
   const { isConnected, address } = useAccount();
   const { openAccountModal } = useAccountModal();
   const { openConnectModal } = useConnectModal();
 
-  const [dropTrxInfo, setDropTrxInfo] = useState<string | null>(null);
+  const [dropTrxInfo, setDropTrxInfo] = useState<DropTrxInfo | null>(null);
   const [copied, setCopied] = useState(false);
 
   //获取中奖列表
@@ -19,7 +25,7 @@ const Navbar: React.FC<NavbarProps> = () => {
     const res = await fetch(
       "https://gist.githubusercontent.com/greenbookwebb/e44f4e7ab3513c09b68930e09a441994/raw/gistfile1.json"
     );
-    const data: Record<string, string> = await res.json();
+    const data: Record<string, DropTrxInfo> = await res.json();
 
     setDropTrxInfo(data[address || ""]);
   };
@@ -91,7 +97,7 @@ const Navbar: React.FC<NavbarProps> = () => {
                   Congrats! Prize Won
                 </div>
                 <div className="text-[#157433] font-bold text-2xl mt-3">
-                  50,000 EDU
+                  {dropTrxInfo?.amount} {dropTrxInfo?.asset}
                 </div>
               </div>
             </div>
@@ -101,12 +107,12 @@ const Navbar: React.FC<NavbarProps> = () => {
                 <span className="text-[#102C24] ">Transaction Hash</span>
                 <div className="flex gap-1 items-center">
                   <span className="text-[#008C50] ">
-                    {`${dropTrxInfo.substring(0, 12)}...`}
+                    {`${dropTrxInfo?.txHash.substring(0, 12)}...`}
                   </span>
                   <CopyIcon
                     className="cursor-pointer"
                     onClick={() => {
-                      navigator.clipboard.writeText(dropTrxInfo);
+                      navigator.clipboard.writeText(dropTrxInfo?.txHash || "");
                       setCopied(true);
                       setTimeout(() => {
                         setCopied(false);

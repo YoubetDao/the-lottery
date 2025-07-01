@@ -14,7 +14,7 @@ npx hardhat ignition deploy ./ignition/modules/Lock.ts
 
 # Lottery Contract Test Report
 
-以下是使用 Hardhat + Ethers v6 + Chai + Mocha 的测试结果摘要：
+The following summarizes the test results using Hardhat + Ethers v6 + Chai + Mocha:
 
 ```bash
 $ npx hardhat test

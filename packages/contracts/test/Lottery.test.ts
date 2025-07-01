@@ -76,13 +76,6 @@ describe("Lottery", function () {
                 lottery.createRound(roundStartTime, roundEndTime, [])
             ).to.be.revertedWith("Winer count must be greater than 0");
         });
-
-        it("should revert if winner count is 0", async () => {
-            const { lottery, roundStartTime, roundEndTime } = await loadFixture(deployContractsFixture);
-            await expect(
-                lottery.createRound(roundStartTime, roundEndTime, [])
-            ).to.be.revertedWith("Winer count must be greater than 0");
-        });
     });
 
     describe("buy", function () {

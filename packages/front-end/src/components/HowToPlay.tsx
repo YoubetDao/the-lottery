@@ -9,9 +9,9 @@ const HowToPlay: React.FC<HowToPlayProps> = ({
   steps = [
     {
       step: 1,
-      title: "Buy Tickets",
+      title: "Buy Tickets with Yuzu",
       description:
-        "Prices are set when the round starts, equal to 5 USD in YUZU per ticket.",
+        "Price per ticket is set when the round starts and will be denominated in Yuzu.",
     },
     {
       step: 2,

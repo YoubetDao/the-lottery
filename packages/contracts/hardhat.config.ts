@@ -17,7 +17,7 @@ const config: HardhatUserConfig = {
 	networks: {
 		eduMainet: {
 			chainId: 41923,
-			url: "https://open-campus-codex-sepolia.drpc.org",
+			url: "https://rpc.edu-chain.raas.gelato.cloud",
 			accounts: [process.env.PRIVATE_KEY!],
 		},
 		eduTestnet: {

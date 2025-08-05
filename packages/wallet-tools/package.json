@@ -1,0 +1,22 @@
+{
+  "name": "@the-lottery/wallet-tools",
+  "version": "1.0.0",
+  "description": "Ethereum wallet generation tools",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "test": "node dist/example.js",
+    "generate-wallet": "npm run build && node -e \"const { WalletGenerator } = require('./dist/index.js'); const wallet = WalletGenerator.generateWallet(); console.log('Private Key:', wallet.privateKey); console.log('Public Key:', wallet.publicKey); console.log('Address:', wallet.address);\""
+  },
+  "keywords": ["ethereum", "wallet", "crypto", "private-key"],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "ethers": "^6.14.4"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "typescript": "^5.0.0"
+  }
+}

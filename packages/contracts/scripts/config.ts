@@ -5,7 +5,7 @@ export const CustomConfig = {
 	},
 	eduMainet: {
 		pointsContract: "0x4429D17e879654fE253dEAdf5EF231e9bCF4C32E",
-		lotteryContract: "",
+		lotteryContract: "0x7ad8047DA17476fAE85492Fd174f2cc079E997dB",
 	},
 };
 

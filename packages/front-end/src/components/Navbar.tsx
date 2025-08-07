@@ -34,7 +34,7 @@ const Navbar: React.FC<NavbarProps> = () => {
     fetchPrizeList();
   }, []);
 
-  console.log("dropTrxInfo", dropTrxInfo);
+  console.log(openAccountModal);
 
   return (
     <>
@@ -58,7 +58,13 @@ const Navbar: React.FC<NavbarProps> = () => {
           </div>
           <div>
             {isConnected ? (
-              <div className="cursor-pointer" onClick={openAccountModal}>
+              <div
+                className="cursor-pointer"
+                onClick={() => {
+                  console.log("click");
+                  openAccountModal?.();
+                }}
+              >
                 <span className="font-bold text-[#F05A28]">
                   {address
                     ? `${address.slice(0, 5)}...${address.slice(-4)}`

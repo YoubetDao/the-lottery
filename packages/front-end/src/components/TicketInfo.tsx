@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { useAccount } from "wagmi";
+import { useAccount, useSwitchChain, useChainId } from "wagmi";
 import { useConnectModal } from "@rainbow-me/rainbowkit";
 import { ContractInfo, TicketData, CountdownData } from "../types";
 import { ReactComponent as CopyIcon } from "../assets/copy-icon.svg";
-import { LOTTERY_ADDRESS } from "../config";
+import { LOTTERY_ADDRESS, currentChain } from "../config";
 import {
   usePointsSignature,
   useBuy,
@@ -92,6 +92,8 @@ const TicketInfo: React.FC<TicketInfoProps> = ({
 }) => {
   const { address, isConnected } = useAccount();
   const { openConnectModal } = useConnectModal();
+  const { switchChain } = useSwitchChain();
+  const chainId = useChainId();
   const [ticketData, setTicketData] = useState<TicketData>(initialTicketData);
   const [contractInfo, setContractInfo] =
     useState<ContractInfo>(initialContractInfo);
@@ -168,6 +170,24 @@ const TicketInfo: React.FC<TicketInfoProps> = ({
 
   const handleBuyTickets = async () => {
     try {
+      // 检查是否在正确的链上
+      if (chainId !== currentChain.id) {
+        try {
+          await switchChain({ chainId: currentChain.id });
+          showBanner({
+            type: "success",
+            message: `Switched to ${currentChain.name}`,
+          });
+        } catch (switchError) {
+          console.error("Switch chain error:", switchError);
+          showBanner({
+            type: "error",
+            message: `Please switch to ${currentChain.name} network in your wallet.`,
+          });
+          return;
+        }
+      }
+
       const amount = BigInt(ticketData.quantity);
       const { signature, deadline, roundId } = await signForBuy(amount);
 

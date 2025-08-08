@@ -17,6 +17,7 @@ export const config = getDefaultConfig({
   appName: "Yuzu Lottery",
   projectId,
   chains: [currentChain],
+  ssr: false,
 });
 
 const App: React.FC = () => {
@@ -75,7 +76,7 @@ const App: React.FC = () => {
   return (
     <WagmiProvider config={config}>
       <QueryClientProvider client={queryClient}>
-        <RainbowKitProvider>
+        <RainbowKitProvider initialChain={currentChain}>
           <GlobalBannerProvider>
             <div className="min-h-screen bg-yuzu-dark-green relative">
               {showWarning && (

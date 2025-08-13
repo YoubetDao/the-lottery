@@ -160,7 +160,7 @@ export function usePointsSignature() {
     const domain = {
       name: "Points",
       version: "1.0",
-      chainId: 656476,
+      chainId,
       verifyingContract: POINTS_ADDRESS as `0x${string}`,
     };
 

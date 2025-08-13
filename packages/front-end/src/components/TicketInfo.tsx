@@ -90,10 +90,10 @@ const TicketInfo: React.FC<TicketInfoProps> = ({
     minutes: 0,
   },
 }) => {
-  const { address, isConnected } = useAccount();
+  const { address, isConnected, chainId } = useAccount();
   const { openConnectModal } = useConnectModal();
-  const { switchChain } = useSwitchChain();
-  const chainId = useChainId();
+  const { chains, switchChain } = useSwitchChain();
+  // const chainId = useChainId();
   const [ticketData, setTicketData] = useState<TicketData>(initialTicketData);
   const [contractInfo, setContractInfo] =
     useState<ContractInfo>(initialContractInfo);
@@ -173,10 +173,10 @@ const TicketInfo: React.FC<TicketInfoProps> = ({
       // 检查是否在正确的链上
       if (chainId !== currentChain.id) {
         try {
-          await switchChain({ chainId: currentChain.id });
+          switchChain({ chainId: currentChain.id });
           showBanner({
             type: "success",
-            message: `Switched to ${currentChain.name}`,
+            message: `Switched to ${currentChain.name}. Please proceed with your purchase.`,
           });
         } catch (switchError) {
           console.error("Switch chain error:", switchError);
@@ -184,8 +184,8 @@ const TicketInfo: React.FC<TicketInfoProps> = ({
             type: "error",
             message: `Please switch to ${currentChain.name} network in your wallet.`,
           });
-          return;
         }
+        return;
       }
 
       const amount = BigInt(ticketData.quantity);

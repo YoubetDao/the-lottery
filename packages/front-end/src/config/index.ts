@@ -1,5 +1,7 @@
 // import { WagmiAdapter } from "@reown/appkit-adapter-wagmi";
 
+import { createConfig, http } from "@wagmi/core";
+
 export const projectId =
   process.env.REACT_APP_PROJECT_ID || "842497ffbfc8c1a13975988f4508fcfa";
 
@@ -42,3 +44,10 @@ export const eduChain = {
 
 export const currentChain =
   process.env.REACT_APP_ENV === "production" ? eduChain : eduTestnet;
+
+export const config = (createConfig as any)({
+  chains: [currentChain],
+  transports: {
+    [currentChain.id]: http(),
+  },
+});

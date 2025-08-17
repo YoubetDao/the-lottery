@@ -99,7 +99,7 @@ const TicketInfo: React.FC<TicketInfoProps> = ({
     useState<ContractInfo>(initialContractInfo);
   const [countdown, setCountdown] = useState<CountdownData>(initialCountdown);
   const [copied, setCopied] = useState(false);
-  const { signForBuy, isLoading: isSignLoading } = usePointsSignature();
+  const { signForBuy } = usePointsSignature();
   const { buy, isPending: isBuyPending, hash, error: buyError } = useBuy();
   const {
     isOpen,
@@ -392,7 +392,7 @@ const TicketInfo: React.FC<TicketInfoProps> = ({
                 ? undefined
                 : handleBuyTickets
             }
-            disabled={isBuyPending || !isConnected}
+            disabled={isBuyPending || !isConnected || ticketData.quantity === 0}
           >
             {!isConnected
               ? "Connect Wallet"

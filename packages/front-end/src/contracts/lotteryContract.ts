@@ -5,9 +5,9 @@ import {
   useAccount,
   useChainId,
 } from "wagmi";
-import { ILotteryABI, ILotteryABI as lotteryAbi } from "../abi/ILottery";
-import { LOTTERY_ADDRESS, POINTS_ADDRESS } from "../config";
-import { useEffect } from "react";
+import { ILotteryABI as lotteryAbi } from "../abi/ILottery";
+import { config, LOTTERY_ADDRESS, POINTS_ADDRESS } from "../config";
+import { readContract } from "@wagmi/core";
 
 export function useLastRoundId() {
   const {
@@ -75,6 +75,34 @@ export function useGenerateSigParam(
   };
 }
 
+const getSignatureParams = async (holder: `0x${string}`, roundId: bigint) => {
+  const result = await (readContract as any)(config, {
+    address: LOTTERY_ADDRESS as `0x${string}`,
+    abi: lotteryAbi,
+    functionName: "generateSigParam",
+    args: [holder, BigInt(roundId)],
+  });
+
+  const [reasonCode, nonce] = result as [string, bigint];
+
+  return {
+    consumeReasonCode: reasonCode,
+    nonce: nonce,
+  };
+};
+
+const getLastRoundId = async () => {
+  const result = await (readContract as any)(config, {
+    address: LOTTERY_ADDRESS as `0x${string}`,
+    abi: lotteryAbi,
+    functionName: "getLastRoundId",
+  });
+
+  const lastRoundId = result as bigint;
+
+  return Number(lastRoundId);
+};
+
 export function useBuy() {
   const {
     writeContractAsync,
@@ -128,28 +156,21 @@ export function usePointsSignature() {
   const chainId = useChainId();
   const { signTypedDataAsync } = useSignTypedData();
 
-  // 获取最新轮次ID
-  const {
-    lastRoundId,
-    isPending: isRoundIdLoading,
-    error: roundIdError,
-  } = useLastRoundId();
-
-  // 获取签名参数
-  const {
-    consumeReasonCode,
-    nonce,
-    isPending: isParamLoading,
-    error: paramError,
-  } = useGenerateSigParam(address as `0x${string}`, lastRoundId);
-
   /**
    * 生成购买彩票所需的签名
    */
   async function signForBuy(amount: bigint) {
+    // 获取到轮次
+    const lastRoundId = await getLastRoundId();
+
+    // 获取nonce和reasonCode
+    const { consumeReasonCode, nonce } = await getSignatureParams(
+      address as `0x${string}`,
+      BigInt(lastRoundId)
+    );
+
     if (!chainId) throw new Error("chainId not found");
     if (!address) throw new Error("wallet not connected");
-    if (isRoundIdLoading) throw new Error("roundId not ready");
     if (lastRoundId < -1) throw new Error("invalid roundId");
     if (lastRoundId === -1) throw new Error("No round is open now");
     if (!consumeReasonCode || nonce === undefined)
@@ -200,9 +221,6 @@ export function usePointsSignature() {
 
   return {
     signForBuy,
-    isLoading: isRoundIdLoading || isParamLoading,
-    roundId: lastRoundId,
-    error: roundIdError || paramError,
   };
 }
 

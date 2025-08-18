@@ -21,21 +21,22 @@ async function main() {
 		}`
 	);
 
-	// Get current timestamp in seconds
-	const currentTimestamp = Math.floor(Date.now() / 1000);
-	const startTime = currentTimestamp - 7 * 24 * 60 * 60;
-	const endTime = currentTimestamp + 1 * 1 * 2 * 60;
+	// params to replace, timestamp in seconds
+	const startTime = 0;
+	const endTime = 0;
+
+	const prizeTiers: bigint[] = [
+		// ethers.parseEther("0.03"), example first prize
+		// ethers.parseEther("0.02"), example second prize
+		// ethers.parseEther("0.01"), example third prize
+	];
+
+	if (startTime === 0 || endTime === 0 || prizeTiers.length === 0) {
+		throw new Error("startTime, endTime and prizeTiers must all be set");
+	}
 
 	console.log("startTime:", new Date(startTime * 1000).toLocaleString());
 	console.log("endTime:", new Date(endTime * 1000).toLocaleString());
-
-	const prizeTiers = [
-		ethers.parseEther("0.03"),
-		ethers.parseEther("0.02"),
-		ethers.parseEther("0.01"),
-		ethers.parseEther("0.005"),
-		ethers.parseEther("0.001"),
-	];
 
 	const tx = await lottery.createRound(startTime, endTime, prizeTiers);
 	await tx.wait();

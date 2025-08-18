@@ -1,6 +1,7 @@
 import { HardhatUserConfig } from "hardhat/config";
 import "@nomicfoundation/hardhat-toolbox";
 import "@nomicfoundation/hardhat-verify";
+import "@nomicfoundation/hardhat-ethers";
 
 import { config as dotEnvConfig } from "dotenv";
 dotEnvConfig();
@@ -16,7 +17,7 @@ const config: HardhatUserConfig = {
 	networks: {
 		eduMainet: {
 			chainId: 41923,
-			url: "https://open-campus-codex-sepolia.drpc.org",
+			url: "https://rpc.edu-chain.raas.gelato.cloud",
 			accounts: [process.env.PRIVATE_KEY!],
 		},
 		eduTestnet: {

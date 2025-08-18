@@ -57,7 +57,7 @@ export const YourHistory = () => {
           >
             <div className="font-medium">{item.roundId.toString()}</div>
             <div className="font-medium">
-              {drawnDateDisplay(item.startTime, false)}
+              {drawnDateDisplay(item.startTime, true)}
             </div>
             <div className="font-medium">
               {item.totalTicketCount.toString()}

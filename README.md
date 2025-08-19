@@ -146,6 +146,7 @@ This script verifies the deployed contract on the blockchain explorer.
 
 Contract addresses are configured in `scripts/config.ts` and must be updated after deployment.
 
+
 ---
 
 If you’d like to contribute or have any questions, feel free to open an issue or reach out to the project maintainer.
